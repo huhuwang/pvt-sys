@@ -32,7 +32,7 @@ public class DeploymentService {
 
     public PageResponse<Deployment> findPage(DeploymentQuery query){
 
-        Pageable pageRequest = PageRequest.of(query.getPageNum(), query.getPageSize(), Sort.by(Sort.Direction.DESC, "createTime"));
+        Pageable pageRequest = PageRequest.of(query.getPageNum() - 1, query.getPageSize(), Sort.by(Sort.Direction.DESC, "createTime", "id"));
         Page<Deployment> deployments = deploymentRepository.findPage(pageRequest, query);
         return new PageResponse<>(deployments);
     }
