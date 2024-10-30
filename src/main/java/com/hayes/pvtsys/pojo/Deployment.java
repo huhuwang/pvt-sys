@@ -1,5 +1,6 @@
 package com.hayes.pvtsys.pojo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -17,7 +18,7 @@ public class Deployment implements Serializable {
     private Integer id;
 
     @Column(name = "deployment_date")
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.DATE)
     private Date deploymentDate;
 
     @Column(name = "deployment_name")
@@ -33,6 +34,7 @@ public class Deployment implements Serializable {
     private String createUser;
 
     @Column(name = "create_time")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createTime;
 
@@ -40,6 +42,7 @@ public class Deployment implements Serializable {
     private String updateUser;
 
     @Column(name = "update_time")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updateTime;
 
