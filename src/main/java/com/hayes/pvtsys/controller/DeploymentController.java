@@ -6,10 +6,7 @@ import com.hayes.pvtsys.query.DeploymentQuery;
 import com.hayes.pvtsys.service.DeploymentService;
 import com.hayes.pvtsys.util.HttpResult;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/deployment")
@@ -21,6 +18,12 @@ public class DeploymentController {
     @PostMapping("/add")
     public HttpResult<Boolean> addDeployment(@RequestBody Deployment deployment){
         deploymentService.addDeployment(deployment);
+        return HttpResult.returnSuccess(true);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public HttpResult<Boolean> deleteDeployment(@PathVariable("id") int id){
+        deploymentService.deleteDeployment(id);
         return HttpResult.returnSuccess(true);
     }
 

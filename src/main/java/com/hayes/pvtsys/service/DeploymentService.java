@@ -30,6 +30,10 @@ public class DeploymentService {
         deploymentRepository.save(deployment);
     }
 
+    public void deleteDeployment(Integer id){
+        deploymentRepository.deleteById(id);
+    }
+
     public PageResponse<Deployment> findPage(DeploymentQuery query){
 
         Pageable pageRequest = PageRequest.of(query.getPageNum() - 1, query.getPageSize(), Sort.by(Sort.Direction.DESC, "createTime", "id"));
