@@ -4,10 +4,7 @@ import com.hayes.pvtsys.pojo.Ticket;
 import com.hayes.pvtsys.service.TicketService;
 import com.hayes.pvtsys.util.HttpResult;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,6 +18,19 @@ public class TicketController {
     @PostMapping("/add")
     public HttpResult<Boolean> addTickets(@RequestBody List<Ticket> tickets){
         ticketService.addTickets(tickets);
+        return HttpResult.returnSuccess(true);
+    }
+
+    @GetMapping("/queryTicketByDeployment/{deploymentId}")
+    public HttpResult<List<Ticket>> queryTicketByDeployment(@PathVariable("deploymentId") int deploymentId){
+
+        List<Ticket> tickets = ticketService.queryTicketsByDeployment(deploymentId);
+        return HttpResult.returnSuccess(tickets);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public HttpResult<Boolean> deleteDeployment(@PathVariable("id") int id){
+        ticketService.deleteTicket(id);
         return HttpResult.returnSuccess(true);
     }
 }

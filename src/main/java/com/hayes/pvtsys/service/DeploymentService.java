@@ -7,6 +7,8 @@ import com.hayes.pvtsys.dto.PageResponse;
 import com.hayes.pvtsys.pojo.Deployment;
 import com.hayes.pvtsys.query.DeploymentQuery;
 import com.hayes.pvtsys.repository.DeploymentRepository;
+import com.hayes.pvtsys.repository.TicketRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,14 +25,16 @@ public class DeploymentService {
     @Autowired
     private DeploymentRepository deploymentRepository;
 
+    @Autowired
+    private TicketRepository ticketRepository;
+
     public void addDeployment(Deployment deployment){
-        deployment.setCreateTime(new Date());
-        deployment.setCreateUser("Hayes");
-        deployment.setStatus((byte) 1);
         deploymentRepository.save(deployment);
     }
 
+    @Transactional
     public void deleteDeployment(Integer id){
+        ticketRepository.deleteTicketByDeployment(id);
         deploymentRepository.deleteById(id);
     }
 

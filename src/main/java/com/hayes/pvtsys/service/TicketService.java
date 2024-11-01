@@ -26,4 +26,12 @@ public class TicketService {
     public void addTickets(List<Ticket> tickets){
         ticketRepository.saveAll(tickets);
     }
+
+    public List<Ticket> queryTicketsByDeployment(int deploymentId){
+       return ticketRepository.findTicketByDeploymentIdOrderByCreateTimeDescIdDesc(deploymentId);
+    }
+
+    public void deleteTicket(int ticketId){
+        ticketRepository.deleteById(ticketId);
+    }
 }

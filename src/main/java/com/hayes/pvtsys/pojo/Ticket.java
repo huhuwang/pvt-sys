@@ -4,6 +4,11 @@ package com.hayes.pvtsys.pojo;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -11,6 +16,7 @@ import java.util.Date;
 @Entity
 @Table(name = "ticket")
 @Data
+@EntityListeners(AuditingEntityListener.class)
 public class Ticket implements Serializable {
 
     @Id
@@ -33,17 +39,21 @@ public class Ticket implements Serializable {
     @Column(name = "ticket_type")
     private String ticketType;
 
+    @CreatedBy
     @Column(name = "create_user")
     private String createUser;
 
+    @CreationTimestamp
     @Column(name = "create_time")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createTime;
 
+    @LastModifiedBy
     @Column(name = "update_user")
     private String updateUser;
 
+    @UpdateTimestamp
     @Column(name = "update_time")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @Temporal(TemporalType.TIMESTAMP)
