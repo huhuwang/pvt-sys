@@ -18,6 +18,8 @@ public class TestCaseDto implements Serializable {
 
     private Integer type;
 
+    private Byte priority;
+
     private int[] envList;
 
     private int[] device;

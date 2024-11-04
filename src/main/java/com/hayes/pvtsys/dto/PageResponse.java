@@ -23,4 +23,11 @@ public class PageResponse<T> implements Serializable {
        this.totalRecordNum = ((Long)page.getTotalElements()).intValue();
        this.data = page.getContent();
     }
+
+    public PageResponse(Integer currentPage, Integer totalPage, Integer totalRecordNum, List<T> data) {
+        this.currentPage = currentPage;
+        this.totalPage = totalPage;
+        this.totalRecordNum = totalRecordNum;
+        this.data = data;
+    }
 }
