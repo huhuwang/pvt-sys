@@ -16,6 +16,8 @@ public interface TicketRepository extends JpaRepository<Ticket, Integer> {
 
     Ticket findTicketByTicketNoAndDeploymentId(String ticketNo, int deploymentId);
 
+    List<Ticket> findTicketByTicketNo(String ticketNo);
+
     @Modifying
     @Transactional
     @Query("DELETE FROM Ticket t where t.deploymentId = :deploymentId")

@@ -10,4 +10,5 @@ import org.springframework.data.repository.query.Param;
 
 public interface TicketResultRepository extends JpaRepository<TestResult, Integer> {
 
+
 }

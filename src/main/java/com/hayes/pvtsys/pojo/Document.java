@@ -1,8 +1,7 @@
 package com.hayes.pvtsys.pojo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.hayes.pvtsys.enums.TestCagetoryEnum;
-import com.hayes.pvtsys.enums.TestDeviceEnum;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -13,37 +12,38 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 @Entity
-@Table(name = "test_result")
+@Table(name = "document")
 @Data
 @EntityListeners(AuditingEntityListener.class)
-public class TestResult implements Serializable {
+public class Document implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
-    private Integer id;
+    private String id;
+
+    @Column(name = "document_name")
+    private String documentName;
 
     @ManyToOne
-    @JoinColumn(name = "case_id")
-    private TestCase testCase;
+    @JoinColumn(name = "result_id")
+    private TestResult result;
 
-    @Column(name = "category")
-    private Integer category;
+    @Column(name = "description")
+    private String description;
 
-    @Column(name = "step")
-    private String step;
+    @Column(name = "original_size")
+    private Long originalSize;
 
-    @Column(name = "test_data")
-    private String testData;
+    @Column(name = "scale_size")
+    private Long scaleSize;
 
-    @Column(name = "actual_result")
-    private String actualResult;
+    @Column(name = "document_type")
+    private String documentType;
 
-    @Column(name = "result")
-    private Byte result;
+    @Column(name = "url")
+    private String url;
 
     @CreatedBy
     @Column(name = "create_user")
@@ -71,14 +71,4 @@ public class TestResult implements Serializable {
     @Column(name = "status")
     private byte status;
 
-    @OneToMany(mappedBy = "result", cascade = CascadeType.ALL)
-    private List<Document> documents;
-
-    public String getEnv() {
-        return TestCagetoryEnum.getEvn(this.category);
-    }
-
-    public String getDevice() {
-        return TestDeviceEnum.getDevice(this.category);
-    }
 }

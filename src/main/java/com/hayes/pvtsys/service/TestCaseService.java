@@ -5,19 +5,18 @@ import cn.hutool.json.JSONUtil;
 import com.hayes.pvtsys.dto.PageResponse;
 import com.hayes.pvtsys.dto.TestCaseDto;
 import com.hayes.pvtsys.dto.TestResultDto;
-import com.hayes.pvtsys.pojo.Deployment;
 import com.hayes.pvtsys.pojo.TestCase;
 import com.hayes.pvtsys.pojo.TestResult;
+import com.hayes.pvtsys.pojo.Ticket;
 import com.hayes.pvtsys.query.CaseQuery;
-import com.hayes.pvtsys.query.DeploymentQuery;
 import com.hayes.pvtsys.repository.TicketCaseRepository;
+import com.hayes.pvtsys.repository.TicketRepository;
 import com.hayes.pvtsys.repository.TicketResultRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -26,6 +25,9 @@ import java.util.Map;
 
 @Service
 public class TestCaseService {
+
+    @Autowired
+    private TicketRepository ticketRepository;
 
     @Autowired
     private TicketCaseRepository ticketCaseRepository;
@@ -51,12 +53,13 @@ public class TestCaseService {
         for (int i: envList){
             for (int j: device){
                 TestResult result = new TestResult();
-                result.setCaseId(testCase.getId());
+                result.setTestCase(testCase);
                 result.setCategory(i + j);
                 results.add(result);
             }
         }
         ticketResultRepository.saveAll(results);
+
     }
 
 

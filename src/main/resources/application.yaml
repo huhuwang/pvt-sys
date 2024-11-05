@@ -21,3 +21,6 @@ spring:
       hibernate:
         format_sql: true
 
+base-file-path: D:/study/tomcat/apache-tomcat/webapps/pvt-source/
+local-tomcat-url: http://localhost:8090/
+
