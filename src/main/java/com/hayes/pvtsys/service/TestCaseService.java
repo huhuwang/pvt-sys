@@ -62,7 +62,7 @@ public class TestCaseService {
 
     public PageResponse<TestResultDto> findPage(CaseQuery query){
         Pageable pageRequest = PageRequest.of(query.getPageNum() - 1, query.getPageSize());
-        Page<Map<String, Object>> results = ticketCaseRepository.findPage(pageRequest, query.getEnv());
+        Page<Map<String, Object>> results = ticketCaseRepository.findPage(pageRequest, query);
         List<TestResultDto> testResults = new ArrayList<>();
         if (CollUtil.isNotEmpty(results.getContent())){
             for (Map<String, Object> result: results.getContent()){

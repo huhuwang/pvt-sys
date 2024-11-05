@@ -33,4 +33,16 @@ public class TicketController {
         ticketService.deleteTicket(id);
         return HttpResult.returnSuccess(true);
     }
+
+    @GetMapping("/query/{ticketNo}/{deploymentId}")
+    public HttpResult<Ticket> queryTicketByTicketNo(@PathVariable("ticketNo") String ticketNo, @PathVariable("deploymentId") int deploymentId){
+        Ticket ticket = ticketService.queryTicketByNo(ticketNo, deploymentId);
+        return HttpResult.returnSuccess(ticket);
+    }
+
+    @GetMapping("/query/{id}")
+    public HttpResult<Ticket> queryTicketByTicketId(@PathVariable("id") int id){
+        Ticket ticket = ticketService.queryTicketById(id);
+        return HttpResult.returnSuccess(ticket);
+    }
 }

@@ -14,10 +14,11 @@ public interface TicketRepository extends JpaRepository<Ticket, Integer> {
 
     List<Ticket> findTicketByDeploymentIdOrderByCreateTimeDescIdDesc(Integer deploymentId);
 
-    Ticket findTicketByTicketNo(String ticketNo);
+    Ticket findTicketByTicketNoAndDeploymentId(String ticketNo, int deploymentId);
 
     @Modifying
     @Transactional
     @Query("DELETE FROM Ticket t where t.deploymentId = :deploymentId")
     void deleteTicketByDeployment(@Param("deploymentId") int deploymentId);
+
 }

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TicketService {
@@ -33,5 +34,13 @@ public class TicketService {
 
     public void deleteTicket(int ticketId){
         ticketRepository.deleteById(ticketId);
+    }
+
+    public Ticket queryTicketByNo(String ticketNo, int deploymentId){
+       return ticketRepository.findTicketByTicketNoAndDeploymentId(ticketNo, deploymentId);
+    }
+
+    public Ticket queryTicketById(int id){
+        return ticketRepository.findById(id).orElseThrow();
     }
 }
