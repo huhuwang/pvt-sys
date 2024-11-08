@@ -5,6 +5,7 @@ import com.hayes.pvtsys.pojo.Document;
 import com.hayes.pvtsys.pojo.TestResult;
 import com.hayes.pvtsys.repository.DocumentRepository;
 import com.hayes.pvtsys.repository.TicketResultRepository;
+import com.hayes.pvtsys.util.ServerPath;
 import jakarta.servlet.http.HttpServletRequest;
 import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +23,6 @@ import java.util.UUID;
 @Service
 public class DocumentService {
 
-    @Value("${base-file-path}")
-    private String outPath;
-
-    @Value("${local-tomcat-url}")
-    private String tomcatUrl;
 
     @Autowired
     private TicketResultRepository ticketResultRepository;
@@ -36,7 +32,10 @@ public class DocumentService {
 
     public Document uploadDocument(HttpServletRequest request, MultipartFile file){
         String resultId = request.getParameter("resultId");
-        if (StrUtil.isNotBlank(resultId) && !file.isEmpty()){
+        String deploymentId = request.getParameter("deploymentId");
+        if (StrUtil.isNotBlank(resultId) && StrUtil.isNotBlank(deploymentId)
+                && !StrUtil.equalsIgnoreCase(resultId, "undefined") && !StrUtil.equalsIgnoreCase(deploymentId, "undefined")
+                && !file.isEmpty()){
             int result = Integer.parseInt(resultId);
             TestResult testResult = ticketResultRepository.findById(result).orElseThrow();
             Document document = new  Document();
@@ -53,8 +52,8 @@ public class DocumentService {
                 height = 360;
             }
 
-            String serverPath = testResult.getTestCase().getTicketNo() + "/" + documentId + ".jpg";
-            String fileTargetPath = outPath + serverPath ;
+            String serverPath = ServerPath.relativePath(deploymentId, testResult.getTestCase().getTicketNo()) + "/" + documentId + ".jpg";
+            String fileTargetPath = ServerPath.partOutPath() + serverPath ;
             try (InputStream inputStream = file.getInputStream()){
                 Thumbnails.of(inputStream)
                         .forceSize(width, height)
@@ -63,7 +62,7 @@ public class DocumentService {
             } catch (IOException e) {
                 throw new RuntimeException(e.getMessage());
             }
-            document.setUrl(tomcatUrl + serverPath);
+            document.setUrl(serverPath);
             document.setScaleSize((long)400 * 1024);
 
             return documentRepository.save(document);

@@ -1,22 +1,15 @@
 package com.hayes.pvtsys.service;
 
 
-import com.hayes.pvtsys.dto.PageResponse;
-import com.hayes.pvtsys.pojo.Deployment;
+import cn.hutool.core.io.FileUtil;
 import com.hayes.pvtsys.pojo.Ticket;
-import com.hayes.pvtsys.query.DeploymentQuery;
-import com.hayes.pvtsys.repository.DeploymentRepository;
 import com.hayes.pvtsys.repository.TicketRepository;
+import com.hayes.pvtsys.util.ServerPath;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class TicketService {
@@ -25,6 +18,10 @@ public class TicketService {
     private TicketRepository ticketRepository;
 
     public void addTickets(List<Ticket> tickets){
+        for(Ticket ticket: tickets){
+            String path = ServerPath.outPath(ticket.getDeploymentId().toString(), ticket.getTicketNo());
+            FileUtil.mkdir(path);
+        }
         ticketRepository.saveAll(tickets);
     }
 
@@ -33,6 +30,7 @@ public class TicketService {
     }
 
     public void deleteTicket(int ticketId){
+        //删除文件夹
         ticketRepository.deleteById(ticketId);
     }
 
