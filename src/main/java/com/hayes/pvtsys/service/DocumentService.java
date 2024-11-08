@@ -53,7 +53,7 @@ public class DocumentService {
             }
 
             String serverPath = ServerPath.relativePath(deploymentId, testResult.getTestCase().getTicketNo()) + "/" + documentId + ".jpg";
-            String fileTargetPath = ServerPath.partOutPath() + serverPath ;
+            File fileTargetPath = new File(ServerPath.partOutPath() + serverPath) ;
             try (InputStream inputStream = file.getInputStream()){
                 Thumbnails.of(inputStream)
                         .forceSize(width, height)
@@ -63,7 +63,7 @@ public class DocumentService {
                 throw new RuntimeException(e.getMessage());
             }
             document.setUrl(serverPath);
-            document.setScaleSize((long)400 * 1024);
+            document.setScaleSize(fileTargetPath.length());
 
             return documentRepository.save(document);
         }
