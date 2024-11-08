@@ -26,9 +26,8 @@ public class Document implements Serializable {
     @Column(name = "document_name")
     private String documentName;
 
-    @ManyToOne
-    @JoinColumn(name = "result_id")
-    private TestResult result;
+    @Column(name = "result_id")
+    private Integer resultId;
 
     @Column(name = "description")
     private String description;

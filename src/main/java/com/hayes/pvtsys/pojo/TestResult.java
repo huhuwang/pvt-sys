@@ -71,7 +71,7 @@ public class TestResult implements Serializable {
     @Column(name = "status")
     private byte status;
 
-    @OneToMany(mappedBy = "result", cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Document> documents;
 
     public String getEnv() {

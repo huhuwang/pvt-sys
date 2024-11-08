@@ -3,12 +3,12 @@ package com.hayes.pvtsys.util;
 import org.springframework.beans.factory.annotation.Value;
 
 public class ServerPath {
-    private static final String OUT_PATH = "D:/study/tomcat/apache-tomcat/webapps/pvt-source/";
-    private static final String TOMCAT_URL = "http://localhost:8090/pvt-source/";
+    private static final String OUT_PATH = "D:/study/tomcat/apache-tomcat/webapps/";
+    private static final String TOMCAT_URL = "http://localhost:8090/";
 
     public static String relativePath(String deploymentId, String ticketNo){
 
-        return "deployment-" + deploymentId + "/" + ticketNo;
+        return "pvt-source/deployment-" + deploymentId + "/" + ticketNo;
     }
 
     public static String outPath(String deploymentId, String ticketNo){

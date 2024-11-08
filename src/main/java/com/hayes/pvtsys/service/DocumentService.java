@@ -44,7 +44,7 @@ public class DocumentService {
             document.setDocumentName(file.getOriginalFilename());
             document.setOriginalSize(file.getSize());
             document.setDocumentType(file.getContentType());
-            document.setResult(testResult);
+            document.setResultId(result);
             String device = testResult.getDevice();
             int width = 480;
             int height = 250;
