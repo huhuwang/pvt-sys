@@ -32,4 +32,10 @@ public class DeploymentController {
         PageResponse<Deployment> page = deploymentService.findPage(query);
         return HttpResult.returnSuccess(page);
     }
+
+    @GetMapping("/query/{id}")
+    public HttpResult<Deployment> queryDeploymentId(@PathVariable("id") int deploymentId){
+        Deployment deployment = deploymentService.queryById(deploymentId);
+        return HttpResult.returnSuccess(deployment);
+    }
 }

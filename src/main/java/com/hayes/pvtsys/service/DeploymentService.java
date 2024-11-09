@@ -44,4 +44,9 @@ public class DeploymentService {
         Page<Deployment> deployments = deploymentRepository.findPage(pageRequest, query);
         return new PageResponse<>(deployments);
     }
+
+    public Deployment queryById(int deploymentId){
+
+        return deploymentRepository.findById(deploymentId).orElseThrow();
+    }
 }
