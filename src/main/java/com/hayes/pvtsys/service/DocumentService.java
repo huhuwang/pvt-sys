@@ -1,5 +1,6 @@
 package com.hayes.pvtsys.service;
 
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.hayes.pvtsys.pojo.Document;
 import com.hayes.pvtsys.pojo.TestResult;
@@ -64,9 +65,18 @@ public class DocumentService {
             }
             document.setUrl(serverPath);
             document.setScaleSize(fileTargetPath.length());
+            document = documentRepository.save(document);
+            Document documentClone = ObjectUtil.cloneByStream(document);
+            documentClone.setUrl(ServerPath.partTomcat() + serverPath);
 
-            return documentRepository.save(document);
+            System.out.println(document);
+            System.out.println(documentClone);
+            return documentClone;
         }
         throw new RuntimeException("上传失败");
+    }
+
+    public void deleteDocument(String documentId){
+        documentRepository.deleteById(documentId);
     }
 }
