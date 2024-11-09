@@ -43,4 +43,8 @@ public class TestResultService {
     public List<Integer> queryCaseId(CaseQuery query){
         return ticketResultRepository.queryCaseId(query);
     }
+
+    public void deleteCase(int resultId){
+        ticketResultRepository.deleteById(resultId);
+    }
 }

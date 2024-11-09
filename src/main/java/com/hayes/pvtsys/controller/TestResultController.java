@@ -33,4 +33,10 @@ public class TestResultController {
         return HttpResult.returnSuccess(caseId);
     }
 
+    @DeleteMapping("delete/{id}")
+    public HttpResult<Boolean> deleteCase(@PathVariable("id") int resultId){
+        testResultService.deleteCase(resultId);
+        return HttpResult.returnSuccess(true);
+    }
+
 }
