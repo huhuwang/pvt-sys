@@ -15,6 +15,6 @@ import org.springframework.data.repository.query.Param;
 import java.util.Map;
 
 public interface BaseTicketCaseRepository extends JpaRepository<BaseTestCase, Integer> {
-    @Query(value = "select b from BaseTestCase b")
+    @Query(value = "select b from BaseTestCase b order by b.id")
     Page<BaseTestCase> findPage(Pageable pageable);
 }
