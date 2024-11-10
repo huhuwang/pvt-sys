@@ -1,5 +1,6 @@
 package com.hayes.pvtsys.pojo;
 
+import cn.hutool.core.util.StrUtil;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.hayes.pvtsys.enums.TestCagetoryEnum;
 import com.hayes.pvtsys.enums.TestDeviceEnum;
@@ -16,34 +17,36 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name = "test_result")
+@Table(name = "common_test_case_base")
 @Data
 @EntityListeners(AuditingEntityListener.class)
-public class TestResult implements Serializable {
+public class BaseTestCase implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "case_id")
-    private TestCase testCase;
+    @Column(name = "description")
+    private String description;
+
+    @Column(name = "summary")
+    private String summary;
+
+    @Column(name = "expected_result")
+    private String expectedResult;
 
     @Column(name = "category")
     private Integer category;
 
-    @Column(name = "step")
-    private String step;
+    @Column(name = "type")
+    private Integer type;
 
-    @Column(name = "test_data")
-    private String testData;
+    @Column(name = "priority")
+    private Byte priority;
 
-    @Column(name = "actual_result")
-    private String actualResult;
-
-    @Column(name = "result")
-    private Byte result;
+    @Column(name = "row_height")
+    private Integer rowHeight;
 
     @CreatedBy
     @Column(name = "create_user")
@@ -71,15 +74,30 @@ public class TestResult implements Serializable {
     @Column(name = "status")
     private byte status;
 
-    @OneToMany
-    @JoinColumn(name="result_id")
-    private List<Document> documents;
+    @Transient
+    private int[] envList;
 
-    public String getEnv() {
-        return TestCagetoryEnum.getEnv(this.category);
+    @Transient
+    private int[] device;
+
+    public int rowHeight(){
+        int summary = StrUtil.isBlank(this.summary) ? 1: this.summary.split("\n").length;
+        int describe = StrUtil.isBlank(this.description) ? 1: this.description.split("\n").length;
+        int expectedResult = StrUtil.isBlank(this.expectedResult) ? 1: this.expectedResult.split("\n").length;
+        int max = Math.max(describe, summary);
+        max = Math.max(expectedResult, max);
+        return max;
     }
 
-    public String getDevice() {
-        return TestDeviceEnum.getDevice(this.category);
+    public String getEnv(){
+        List<String> allEnv = TestCagetoryEnum.getAllEnv(this.category);
+        List<String> allDevice = TestDeviceEnum.getAllDevice(this.category);
+        StringBuilder sb = new StringBuilder();
+        for (String env: allEnv){
+            for (String device: allDevice){
+                sb.append(env).append("-").append(device).append(",");
+            }
+        }
+        return sb.substring(0, sb.toString().length() - 1);
     }
 }

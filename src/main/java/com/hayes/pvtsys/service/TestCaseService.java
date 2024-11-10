@@ -5,13 +5,16 @@ import cn.hutool.json.JSONUtil;
 import com.hayes.pvtsys.dto.PageResponse;
 import com.hayes.pvtsys.dto.TestCaseDto;
 import com.hayes.pvtsys.dto.TestResultDto;
-import com.hayes.pvtsys.pojo.TestCase;
-import com.hayes.pvtsys.pojo.TestResult;
-import com.hayes.pvtsys.pojo.Ticket;
+import com.hayes.pvtsys.enums.TestCagetoryEnum;
+import com.hayes.pvtsys.enums.TestDeviceEnum;
+import com.hayes.pvtsys.pojo.*;
+import com.hayes.pvtsys.query.BaseQuery;
 import com.hayes.pvtsys.query.CaseQuery;
+import com.hayes.pvtsys.repository.BaseTicketCaseRepository;
 import com.hayes.pvtsys.repository.TicketCaseRepository;
 import com.hayes.pvtsys.repository.TicketRepository;
 import com.hayes.pvtsys.repository.TicketResultRepository;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,6 +23,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -34,6 +38,9 @@ public class TestCaseService {
 
     @Autowired
     private TicketResultRepository ticketResultRepository;
+
+    @Autowired
+    private BaseTicketCaseRepository baseTicketCaseRepository;
 
     @Transactional
     public void addCase(TestCaseDto testCaseDto){
@@ -74,5 +81,39 @@ public class TestCaseService {
             }
         }
         return new PageResponse<>(results.getNumber() + 1, results.getTotalPages(),((Long)results.getTotalElements()).intValue(), testResults);
+    }
+
+    /**
+     *
+     * base
+     * @param query 查询条件
+     * @return 分页记录
+     */
+    public PageResponse<BaseTestCase> findBaseCasePage(BaseQuery query){
+        Pageable pageRequest = PageRequest.of(query.getPageNum() - 1, query.getPageSize());
+        Page<BaseTestCase> baseTestCases = baseTicketCaseRepository.findPage(pageRequest);
+        return new PageResponse<>(baseTestCases);
+    }
+
+    public void addBaseCase(BaseTestCase baseTestCase){
+        int[] envList = baseTestCase.getEnvList();
+        int[] deviceList = baseTestCase.getDevice();
+        int sum = Arrays.stream(envList).sum() + Arrays.stream(deviceList).sum();
+        baseTestCase.setCategory(sum);
+        baseTestCase.setRowHeight(baseTestCase.rowHeight());
+        baseTicketCaseRepository.save(baseTestCase);
+    }
+
+    public void deleteBaseCase(int baseCaseId){
+        baseTicketCaseRepository.deleteById(baseCaseId);
+    }
+
+    public BaseTestCase queryBaseCase(int baseCaseId){
+        BaseTestCase baseTestCase = baseTicketCaseRepository.findById(baseCaseId).orElseThrow();
+        int[] envArray = TestCagetoryEnum.getAllEnvValueArray(baseTestCase.getCategory());
+        int[] deviceArray = TestDeviceEnum.getAllDeviceValueArray(baseTestCase.getCategory());
+        baseTestCase.setEnvList(envArray);
+        baseTestCase.setDevice(deviceArray);
+        return baseTestCase;
     }
 }

@@ -44,7 +44,7 @@ public class TestResultDto {
     private String device;
 
     public String getEnv() {
-        return TestCagetoryEnum.getEvn(this.category);
+        return TestCagetoryEnum.getEnv(this.category);
     }
 
     public String getDevice() {

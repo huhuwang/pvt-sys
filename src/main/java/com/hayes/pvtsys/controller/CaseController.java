@@ -3,14 +3,13 @@ package com.hayes.pvtsys.controller;
 import com.hayes.pvtsys.dto.PageResponse;
 import com.hayes.pvtsys.dto.TestCaseDto;
 import com.hayes.pvtsys.dto.TestResultDto;
+import com.hayes.pvtsys.pojo.BaseTestCase;
+import com.hayes.pvtsys.query.BaseQuery;
 import com.hayes.pvtsys.query.CaseQuery;
 import com.hayes.pvtsys.service.TestCaseService;
 import com.hayes.pvtsys.util.HttpResult;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -31,5 +30,29 @@ public class CaseController {
     public HttpResult<PageResponse<TestResultDto>> findPage(@RequestBody CaseQuery query){
         PageResponse<TestResultDto> page = testCaseService.findPage(query);
         return HttpResult.returnSuccess(page);
+    }
+
+    @PostMapping("/base/page")
+    public HttpResult<PageResponse<BaseTestCase>> findBaseCase(@RequestBody BaseQuery query){
+        PageResponse<BaseTestCase> baseCasePage = testCaseService.findBaseCasePage(query);
+        return HttpResult.returnSuccess(baseCasePage);
+    }
+
+    @PostMapping("/base/add")
+    public HttpResult<Boolean> addBaseCase(@RequestBody BaseTestCase baseTestCase){
+        testCaseService.addBaseCase(baseTestCase);
+        return HttpResult.returnSuccess(true);
+    }
+
+    @DeleteMapping("/base/delete/{id}")
+    public HttpResult<Boolean> deleteBaseCase(@PathVariable("id") int id){
+        testCaseService.deleteBaseCase(id);
+        return HttpResult.returnSuccess(true);
+    }
+
+    @GetMapping("/base/query/{id}")
+    public HttpResult<BaseTestCase> queryBaseCase(@PathVariable("id") int id){
+        BaseTestCase baseTestCase = testCaseService.queryBaseCase(id);
+        return HttpResult.returnSuccess(baseTestCase);
     }
 }
