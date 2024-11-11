@@ -6,6 +6,7 @@ import com.hayes.pvtsys.dto.PageResponse;
 import com.hayes.pvtsys.dto.TestCaseDto;
 import com.hayes.pvtsys.dto.TestResultDto;
 import com.hayes.pvtsys.enums.TestCagetoryEnum;
+import com.hayes.pvtsys.enums.TestCaseEnum;
 import com.hayes.pvtsys.enums.TestDeviceEnum;
 import com.hayes.pvtsys.pojo.*;
 import com.hayes.pvtsys.query.BaseQuery;
@@ -115,5 +116,10 @@ public class TestCaseService {
         baseTestCase.setEnvList(envArray);
         baseTestCase.setDevice(deviceArray);
         return baseTestCase;
+    }
+
+    public List<BaseTestCase> queryCaseIdWithCommon(Integer deploymentId){
+        String ticketNo = TestCaseEnum.COMMON_CASE.name() + "-" + deploymentId;
+        return baseTicketCaseRepository.queryBaseExcluding(ticketNo);
     }
 }

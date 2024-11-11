@@ -46,6 +46,9 @@ public class TestCase implements Serializable {
     @Column(name = "row_height")
     private Integer rowHeight;
 
+    @Column(name = "from")
+    private Integer from;
+
     @CreatedBy
     @Column(name = "create_user")
     private String createUser;

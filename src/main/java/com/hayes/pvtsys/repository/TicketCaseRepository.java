@@ -21,5 +21,4 @@ public interface TicketCaseRepository extends JpaRepository<TestCase, Integer> {
             countQuery = "SELECT count(*) from test_result r  INNER JOIN test_case c on c.id = r.case_id " +
             " WHERE c.ticket_no = :#{#query.ticketNo} and (r.category & :#{#query.env}) > 0 and (r.category & :#{#query.device}) > 0", nativeQuery = true)
     Page<Map<String, Object>> findPage(Pageable pageable, @Param("query") CaseQuery query);
-
 }

@@ -11,6 +11,7 @@ import com.hayes.pvtsys.util.HttpResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -54,5 +55,11 @@ public class CaseController {
     public HttpResult<BaseTestCase> queryBaseCase(@PathVariable("id") int id){
         BaseTestCase baseTestCase = testCaseService.queryBaseCase(id);
         return HttpResult.returnSuccess(baseTestCase);
+    }
+
+    @GetMapping("/relate/query/{deploymentId}")
+    public HttpResult<List<BaseTestCase>> queryCaseIdWithCommon(@PathVariable("deploymentId") int deploymentId){
+        List<BaseTestCase> baseTestCases = testCaseService.queryCaseIdWithCommon(deploymentId);
+        return HttpResult.returnSuccess(baseTestCases);
     }
 }
