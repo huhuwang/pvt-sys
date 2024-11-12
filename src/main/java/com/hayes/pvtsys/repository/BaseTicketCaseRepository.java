@@ -3,6 +3,7 @@ package com.hayes.pvtsys.repository;
 import com.hayes.pvtsys.pojo.BaseTestCase;
 import com.hayes.pvtsys.pojo.Deployment;
 import com.hayes.pvtsys.pojo.TestCase;
+import com.hayes.pvtsys.query.BaseCaseQuery;
 import com.hayes.pvtsys.query.BaseQuery;
 import com.hayes.pvtsys.query.CaseQuery;
 import com.hayes.pvtsys.query.DeploymentQuery;
@@ -19,9 +20,12 @@ public interface BaseTicketCaseRepository extends JpaRepository<BaseTestCase, In
     @Query(value = "select b from BaseTestCase b  WHERE b.type = 2 order by b.id")
     Page<BaseTestCase> findPage(Pageable pageable);
 
-
     @Query("select b from BaseTestCase b " +
-            " where b.id not in (select t.from from TestCase t where t.type = 2 and t.ticketNo = :ticketNo) ")
-    List<BaseTestCase> queryBaseExcluding(@Param("ticketNo") String ticketNo);
+            " where b.id not in (select t.baseCaseFrom from TestCase t where t.type = 2 and t.ticketNo = :#{#query.ticketNo}) " +
+            " and (:#{#query.baseCaseIds} is null or b.id in (:#{#query.baseCaseIds}))")
+    List<BaseTestCase> queryBaseExcluding(@Param("query") BaseCaseQuery query);
+
+
+
 
 }

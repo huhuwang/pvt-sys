@@ -2,11 +2,14 @@ package com.hayes.pvtsys.service;
 
 
 import cn.hutool.core.io.FileUtil;
+import com.hayes.pvtsys.pojo.TestCase;
 import com.hayes.pvtsys.pojo.Ticket;
+import com.hayes.pvtsys.repository.TicketCaseRepository;
 import com.hayes.pvtsys.repository.TicketRepository;
+import com.hayes.pvtsys.repository.TicketResultRepository;
 import com.hayes.pvtsys.util.ServerPath;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,8 +20,12 @@ public class TicketService {
     @Autowired
     private TicketRepository ticketRepository;
 
+    @Autowired
+    private TicketCaseRepository ticketCaseRepository;
+
     public void addTickets(List<Ticket> tickets){
         for(Ticket ticket: tickets){
+            ticket.setType((byte) 1);
             String path = ServerPath.outPath(ticket.getDeploymentId().toString(), ticket.getTicketNo());
             FileUtil.mkdir(path);
         }
@@ -29,8 +36,10 @@ public class TicketService {
        return ticketRepository.findTicketByDeploymentIdOrderByCreateTimeDescIdDesc(deploymentId);
     }
 
+    @Transactional
     public void deleteTicket(int ticketId){
-        //删除文件夹
+        Ticket ticket = ticketRepository.findById(ticketId).orElseThrow();
+        ticketCaseRepository.deleteTestCaseByTicketNo(ticket.getTicketNo());
         ticketRepository.deleteById(ticketId);
     }
 

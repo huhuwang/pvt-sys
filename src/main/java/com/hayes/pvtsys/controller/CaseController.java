@@ -1,6 +1,7 @@
 package com.hayes.pvtsys.controller;
 
 import com.hayes.pvtsys.dto.PageResponse;
+import com.hayes.pvtsys.dto.RelatedCaseDto;
 import com.hayes.pvtsys.dto.TestCaseDto;
 import com.hayes.pvtsys.dto.TestResultDto;
 import com.hayes.pvtsys.pojo.BaseTestCase;
@@ -61,5 +62,11 @@ public class CaseController {
     public HttpResult<List<BaseTestCase>> queryCaseIdWithCommon(@PathVariable("deploymentId") int deploymentId){
         List<BaseTestCase> baseTestCases = testCaseService.queryCaseIdWithCommon(deploymentId);
         return HttpResult.returnSuccess(baseTestCases);
+    }
+
+    @PostMapping("/relate/add")
+    public HttpResult<Boolean> relateCase(@RequestBody RelatedCaseDto relatedCaseDto){
+        testCaseService.addRelate(relatedCaseDto);
+        return HttpResult.returnSuccess(true);
     }
 }

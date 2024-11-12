@@ -34,7 +34,7 @@ public class DeploymentService {
 
     @Transactional
     public void deleteDeployment(Integer id){
-        ticketRepository.deleteTicketByDeployment(id);
+        ticketRepository.deleteTicketByDeploymentId(id);
         deploymentRepository.deleteById(id);
     }
 

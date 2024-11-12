@@ -39,6 +39,9 @@ public class Ticket implements Serializable {
     @Column(name = "ticket_type")
     private String ticketType;
 
+    @Column(name = "type")
+    private byte type;
+
     @CreatedBy
     @Column(name = "create_user")
     private String createUser;

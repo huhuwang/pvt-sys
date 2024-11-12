@@ -3,9 +3,11 @@ package com.hayes.pvtsys.repository;
 import com.hayes.pvtsys.dto.TestResultDto;
 import com.hayes.pvtsys.pojo.TestResult;
 import com.hayes.pvtsys.query.CaseQuery;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -16,4 +18,12 @@ public interface TicketResultRepository extends JpaRepository<TestResult, Intege
     @Query(value = "SELECT r.id from test_result r INNER JOIN test_case c on c.id = r.case_id " +
             " WHERE c.ticket_no = :#{#query.ticketNo} and (r.category & :#{#query.env}) > 0 and (r.category & :#{#query.device}) > 0 order by c.create_time desc, r.id", nativeQuery = true)
     List<Integer> queryCaseId(@Param("query") CaseQuery query);
+
+    @Modifying
+    @Transactional
+    @Query(value = "delete from TestResult r where r.testCase.id = :caseId")
+    void deleteTestResultByTestCaseId(@Param("caseId") int caseId);
+
+    @Query(value = "select count(*) from TestResult t where t.testCase.id = :caseId")
+    int countByCase(@Param("caseId") int caseId);
 }

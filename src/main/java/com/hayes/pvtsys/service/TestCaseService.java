@@ -1,21 +1,24 @@
 package com.hayes.pvtsys.service;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.io.FileUtil;
 import cn.hutool.json.JSONUtil;
 import com.hayes.pvtsys.dto.PageResponse;
+import com.hayes.pvtsys.dto.RelatedCaseDto;
 import com.hayes.pvtsys.dto.TestCaseDto;
 import com.hayes.pvtsys.dto.TestResultDto;
+import com.hayes.pvtsys.enums.Constants;
 import com.hayes.pvtsys.enums.TestCagetoryEnum;
-import com.hayes.pvtsys.enums.TestCaseEnum;
 import com.hayes.pvtsys.enums.TestDeviceEnum;
 import com.hayes.pvtsys.pojo.*;
+import com.hayes.pvtsys.query.BaseCaseQuery;
 import com.hayes.pvtsys.query.BaseQuery;
 import com.hayes.pvtsys.query.CaseQuery;
 import com.hayes.pvtsys.repository.BaseTicketCaseRepository;
 import com.hayes.pvtsys.repository.TicketCaseRepository;
 import com.hayes.pvtsys.repository.TicketRepository;
 import com.hayes.pvtsys.repository.TicketResultRepository;
-import jakarta.persistence.criteria.CriteriaBuilder;
+import com.hayes.pvtsys.util.ServerPath;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,10 +26,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class TestCaseService {
@@ -55,18 +56,12 @@ public class TestCaseService {
         testCase.setPriority(testCaseDto.getPriority());
         testCase = ticketCaseRepository.save(testCase);
         //add result
-        int[] envList = testCaseDto.getEnvList();
+        int[] env = testCaseDto.getEnvList();
         int[] device = testCaseDto.getDevice();
-        List<TestResult> results = new ArrayList<>();
-        for (int i: envList){
-            for (int j: device){
-                TestResult result = new TestResult();
-                result.setTestCase(testCase);
-                result.setCategory(i + j);
-                results.add(result);
-            }
-        }
-        ticketResultRepository.saveAll(results);
+
+        List<Integer> envList = Arrays.stream(env).boxed().toList();
+        List<Integer> deviceList = Arrays.stream(device).boxed().toList();
+        ticketResultRepository.saveAll(createResults(envList, deviceList, testCase));
 
     }
 
@@ -119,7 +114,72 @@ public class TestCaseService {
     }
 
     public List<BaseTestCase> queryCaseIdWithCommon(Integer deploymentId){
-        String ticketNo = TestCaseEnum.COMMON_CASE.name() + "-" + deploymentId;
-        return baseTicketCaseRepository.queryBaseExcluding(ticketNo);
+        String ticketNo = Constants.COMMON_TICKET_NAME + "-" + deploymentId;
+        BaseCaseQuery query = new BaseCaseQuery();
+        query.setTicketNo(ticketNo);
+        return baseTicketCaseRepository.queryBaseExcluding(query);
+    }
+
+    @Transactional
+    public void addRelate(RelatedCaseDto relatedCaseDto){
+        if (CollUtil.isNotEmpty(relatedCaseDto.getCaseIds())){
+            int deploymentId = relatedCaseDto.getDeploymentId();
+            Set<Integer> caseIds = relatedCaseDto.getCaseIds();
+            String ticketNo = Constants.COMMON_TICKET_NAME + "-" + deploymentId;
+            Ticket ticket = ticketRepository.findTicketByTicketNoAndDeploymentId(ticketNo, deploymentId);
+            if (ticket == null){
+                //新增ticket
+                ticket = new Ticket();
+                ticket.setDeploymentId(deploymentId);
+                ticket.setTicketNo(ticketNo);
+                ticket.setType((byte) 2);
+                ticket.setTicketTitle(Constants.COMMON_TICKET_TITLE);
+                ticket.setTicketUrl(Constants.COMMON_TICKET_DETAIL);
+                ticket.setTicketType(Constants.COMMON_TICKET_TYPE);
+
+                String path = ServerPath.outPath(ticket.getDeploymentId().toString(), ticket.getTicketNo());
+                FileUtil.mkdir(path);
+
+                ticketRepository.saveAndFlush(ticket);
+            }
+            //add case & result
+            BaseCaseQuery query = new BaseCaseQuery();
+            query.setTicketNo(ticketNo);
+            query.setBaseCaseIds(caseIds);
+            List<BaseTestCase> baseTestCases = baseTicketCaseRepository.queryBaseExcluding(query);
+            for (BaseTestCase baseTestCase: baseTestCases){
+                TestCase testCase = getTestCase(baseTestCase, ticketNo);
+                ticketCaseRepository.saveAndFlush(testCase);
+                Integer category = baseTestCase.getCategory();
+                List<Integer> envList = TestCagetoryEnum.getAllEnvValue(category);
+                List<Integer> deviceList = TestDeviceEnum.getAllDeviceValue(category);
+                ticketResultRepository.saveAllAndFlush(createResults(envList, deviceList, testCase));
+            }
+        }
+    }
+
+    private List<TestResult> createResults(List<Integer> envList, List<Integer> deviceList, TestCase testCase){
+        List<TestResult> results = new ArrayList<>();
+        for (int i: envList){
+            for (int j: deviceList){
+                TestResult result = new TestResult();
+                result.setTestCase(testCase);
+                result.setCategory(i + j);
+                results.add(result);
+            }
+        }
+        return results;
+    }
+    private TestCase getTestCase(BaseTestCase baseTestCase, String ticketNo) {
+        TestCase testCase = new TestCase();
+        testCase.setTicketNo(ticketNo);
+        testCase.setDescription(baseTestCase.getDescription());
+        testCase.setSummary(baseTestCase.getSummary());
+        testCase.setExpectedResult(baseTestCase.getExpectedResult());
+        testCase.setPriority(baseTestCase.getPriority());
+        testCase.setType(baseTestCase.getType());
+        testCase.setRowHeight(baseTestCase.getRowHeight());
+        testCase.setBaseCaseFrom(baseTestCase.getId());
+        return testCase;
     }
 }

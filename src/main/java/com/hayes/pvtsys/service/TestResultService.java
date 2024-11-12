@@ -8,6 +8,7 @@ import com.hayes.pvtsys.query.CaseQuery;
 import com.hayes.pvtsys.repository.TicketCaseRepository;
 import com.hayes.pvtsys.repository.TicketResultRepository;
 import com.hayes.pvtsys.util.ServerPath;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,9 @@ public class TestResultService {
 
     @Autowired
     private TicketResultRepository ticketResultRepository;
+
+    @Autowired
+    private TicketCaseRepository ticketCaseRepository;
 
     public TestResult queryResultById(int resultId){
 
@@ -44,7 +48,16 @@ public class TestResultService {
         return ticketResultRepository.queryCaseId(query);
     }
 
+    @Transactional
     public void deleteCase(int resultId){
+
+        TestResult result = ticketResultRepository.findById(resultId).orElseThrow();
+        Integer caseId = result.getTestCase().getId();
         ticketResultRepository.deleteById(resultId);
+
+        int cnt = ticketResultRepository.countByCase(caseId);
+        if (cnt == 0){
+            ticketCaseRepository.deleteById(caseId);
+        }
     }
 }
