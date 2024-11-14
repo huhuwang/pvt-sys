@@ -23,6 +23,8 @@ public class TestCaseDto implements Serializable {
 
     private Integer category;
 
+    private Integer rtFlow;
+
     public int rowHeight(){
        int describe = StrUtil.isBlank(this.description) ? 1: this.description.split("\n").length;
        int summary = StrUtil.isBlank(this.summary) ? 1: this.summary.split("\n").length;

@@ -7,7 +7,7 @@ public class CaseQuery extends BaseQuery{
 
     private String ticketNo;
 
-    private int env;
+    private Integer env;
 
-    private int device;
+    private Integer device;
 }

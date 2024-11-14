@@ -5,6 +5,7 @@ import com.hayes.pvtsys.dto.RelatedCaseDto;
 import com.hayes.pvtsys.dto.TestCaseDto;
 import com.hayes.pvtsys.dto.TestResultDto;
 import com.hayes.pvtsys.pojo.BaseTestCase;
+import com.hayes.pvtsys.query.BaseCaseQuery;
 import com.hayes.pvtsys.query.BaseQuery;
 import com.hayes.pvtsys.query.CaseQuery;
 import com.hayes.pvtsys.service.TestCaseService;
@@ -58,9 +59,9 @@ public class CaseController {
         return HttpResult.returnSuccess(baseTestCase);
     }
 
-    @GetMapping("/relate/query/{deploymentId}")
-    public HttpResult<List<BaseTestCase>> queryCaseIdWithCommon(@PathVariable("deploymentId") int deploymentId){
-        List<BaseTestCase> baseTestCases = testCaseService.queryCaseIdWithCommon(deploymentId);
+    @PostMapping("/relate/query")
+    public HttpResult<List<BaseTestCase>> queryCaseIdWithCommon(@RequestBody BaseCaseQuery query){
+        List<BaseTestCase> baseTestCases = testCaseService.queryCaseIdWithCommon(query);
         return HttpResult.returnSuccess(baseTestCases);
     }
 

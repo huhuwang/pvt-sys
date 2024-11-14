@@ -56,9 +56,8 @@ public class TestCaseService {
         testCase.setPriority(testCaseDto.getPriority());
         testCase = ticketCaseRepository.save(testCase);
         //add result
-        List<Integer> env = TestCagetoryEnum.getAllEnvValue(testCaseDto.getCategory());
-        List<Integer> device = TestDeviceEnum.getAllDeviceValue(testCaseDto.getCategory());
-        ticketResultRepository.saveAll(createResults(env, device, testCase));
+
+        ticketResultRepository.saveAll(createResults(testCaseDto.getCategory(), testCase, testCaseDto.getRtFlow()));
     }
 
 
@@ -100,9 +99,9 @@ public class TestCaseService {
         return baseTicketCaseRepository.findById(baseCaseId).orElseThrow();
     }
 
-    public List<BaseTestCase> queryCaseIdWithCommon(Integer deploymentId){
+    public List<BaseTestCase> queryCaseIdWithCommon(BaseCaseQuery query){
+        Integer deploymentId = query.getDeploymentId();
         String ticketNo = Constants.COMMON_TICKET_NAME + "-" + deploymentId;
-        BaseCaseQuery query = new BaseCaseQuery();
         query.setTicketNo(ticketNo);
         return baseTicketCaseRepository.queryBaseExcluding(query);
     }
@@ -133,25 +132,28 @@ public class TestCaseService {
             BaseCaseQuery query = new BaseCaseQuery();
             query.setTicketNo(ticketNo);
             query.setBaseCaseIds(caseIds);
-            List<BaseTestCase> baseTestCases = baseTicketCaseRepository.queryBaseExcluding(query);
+            List<BaseTestCase> baseTestCases = baseTicketCaseRepository.queryBase(query);
             for (BaseTestCase baseTestCase: baseTestCases){
                 TestCase testCase = getTestCase(baseTestCase, ticketNo);
                 ticketCaseRepository.saveAndFlush(testCase);
                 Integer category = baseTestCase.getCategory();
-                List<Integer> envList = TestCagetoryEnum.getAllEnvValue(category);
-                List<Integer> deviceList = TestDeviceEnum.getAllDeviceValue(category);
-                ticketResultRepository.saveAllAndFlush(createResults(envList, deviceList, testCase));
+                ticketResultRepository.saveAllAndFlush(createResults(category, testCase, baseTestCase.getRtFlow()));
             }
         }
     }
 
-    private List<TestResult> createResults(List<Integer> envList, List<Integer> deviceList, TestCase testCase){
+    private List<TestResult> createResults(int category, TestCase testCase, Integer rtFlow){
+        List<Integer> envList = TestCagetoryEnum.getAllEnvValue(category);
+        List<Integer> deviceList = TestDeviceEnum.getAllDeviceValue(category);
         List<TestResult> results = new ArrayList<>();
         for (int i: envList){
             for (int j: deviceList){
                 TestResult result = new TestResult();
                 result.setTestCase(testCase);
                 result.setCategory(i + j);
+                if ((i & TestCagetoryEnum.RT.getValue()) > 0){
+                    result.setRtFlow(rtFlow);
+                }
                 results.add(result);
             }
         }
