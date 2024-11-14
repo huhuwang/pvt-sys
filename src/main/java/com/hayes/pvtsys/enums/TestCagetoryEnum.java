@@ -47,12 +47,4 @@ public enum TestCagetoryEnum {
         }
         return evnList;
     }
-    public static int[] getAllEnvValueArray(int category){
-       List<Integer> envList = getAllEnvValue(category);
-       int[] arrayInt = new int[envList.size()];
-       for (int i = 0; i < envList.size(); i ++){
-           arrayInt[i] = envList.get(i);
-        }
-       return arrayInt;
-    }
 }

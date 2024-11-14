@@ -56,13 +56,9 @@ public class TestCaseService {
         testCase.setPriority(testCaseDto.getPriority());
         testCase = ticketCaseRepository.save(testCase);
         //add result
-        int[] env = testCaseDto.getEnvList();
-        int[] device = testCaseDto.getDevice();
-
-        List<Integer> envList = Arrays.stream(env).boxed().toList();
-        List<Integer> deviceList = Arrays.stream(device).boxed().toList();
-        ticketResultRepository.saveAll(createResults(envList, deviceList, testCase));
-
+        List<Integer> env = TestCagetoryEnum.getAllEnvValue(testCaseDto.getCategory());
+        List<Integer> device = TestDeviceEnum.getAllDeviceValue(testCaseDto.getCategory());
+        ticketResultRepository.saveAll(createResults(env, device, testCase));
     }
 
 
@@ -92,10 +88,6 @@ public class TestCaseService {
     }
 
     public void addBaseCase(BaseTestCase baseTestCase){
-        int[] envList = baseTestCase.getEnvList();
-        int[] deviceList = baseTestCase.getDevice();
-        int sum = Arrays.stream(envList).sum() + Arrays.stream(deviceList).sum();
-        baseTestCase.setCategory(sum);
         baseTestCase.setRowHeight(baseTestCase.rowHeight());
         baseTicketCaseRepository.save(baseTestCase);
     }
@@ -105,12 +97,7 @@ public class TestCaseService {
     }
 
     public BaseTestCase queryBaseCase(int baseCaseId){
-        BaseTestCase baseTestCase = baseTicketCaseRepository.findById(baseCaseId).orElseThrow();
-        int[] envArray = TestCagetoryEnum.getAllEnvValueArray(baseTestCase.getCategory());
-        int[] deviceArray = TestDeviceEnum.getAllDeviceValueArray(baseTestCase.getCategory());
-        baseTestCase.setEnvList(envArray);
-        baseTestCase.setDevice(deviceArray);
-        return baseTestCase;
+        return baseTicketCaseRepository.findById(baseCaseId).orElseThrow();
     }
 
     public List<BaseTestCase> queryCaseIdWithCommon(Integer deploymentId){

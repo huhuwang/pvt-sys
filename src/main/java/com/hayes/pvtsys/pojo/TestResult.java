@@ -45,6 +45,9 @@ public class TestResult implements Serializable {
     @Column(name = "result")
     private Byte result;
 
+    @Column(name = "rt_flow")
+    private Integer rtFlow;
+
     @CreatedBy
     @Column(name = "create_user")
     private String createUser;

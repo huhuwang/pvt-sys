@@ -43,13 +43,4 @@ public enum TestDeviceEnum {
         }
         return deviceList;
     }
-
-    public static int[] getAllDeviceValueArray(int category){
-        List<Integer> deviceValueList = getAllDeviceValue(category);
-        int[] arrayInt = new int[deviceValueList.size()];
-        for (int i = 0; i < deviceValueList.size(); i ++){
-            arrayInt[i] = deviceValueList.get(i);
-        }
-        return arrayInt;
-    }
 }

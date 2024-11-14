@@ -48,6 +48,9 @@ public class BaseTestCase implements Serializable {
     @Column(name = "row_height")
     private Integer rowHeight;
 
+    @Column(name = "rt_flow")
+    private Integer rtFlow;
+
     @CreatedBy
     @Column(name = "create_user")
     private String createUser;

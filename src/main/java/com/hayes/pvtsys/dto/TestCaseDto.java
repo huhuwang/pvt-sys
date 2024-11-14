@@ -1,6 +1,7 @@
 package com.hayes.pvtsys.dto;
 
 import cn.hutool.core.util.StrUtil;
+import jakarta.persistence.Column;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -20,9 +21,7 @@ public class TestCaseDto implements Serializable {
 
     private Byte priority;
 
-    private int[] envList;
-
-    private int[] device;
+    private Integer category;
 
     public int rowHeight(){
        int describe = StrUtil.isBlank(this.description) ? 1: this.description.split("\n").length;
