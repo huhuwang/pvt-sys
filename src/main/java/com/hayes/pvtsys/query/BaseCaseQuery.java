@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.util.Set;
 
 @Data
-public class BaseCaseQuery implements Serializable {
+public class BaseCaseQuery extends BaseQuery {
 
     private Integer deploymentId;
 
@@ -17,4 +17,6 @@ public class BaseCaseQuery implements Serializable {
     private Integer env;
 
     private Integer device;
+
+    private String description;
 }

@@ -17,8 +17,16 @@ import java.util.List;
 import java.util.Map;
 
 public interface BaseTicketCaseRepository extends JpaRepository<BaseTestCase, Integer> {
-    @Query(value = "select b from BaseTestCase b  WHERE b.type = 2 order by b.id")
-    Page<BaseTestCase> findPage(Pageable pageable);
+    @Query(value = "select b.* from common_test_case_base b  WHERE b.type = 2 " +
+            " and (b.category & :#{#query.env}) > 0 " +
+            " and (b.category & :#{#query.device}) > 0 " +
+            " and (:#{#query.description} is null or :#{#query.description.trim()} = '' or LOWER(b.description) like CONCAT('%',LOWER(:#{#query.description.trim()}), '%')) " +
+            " order by b.id",
+            countQuery = "select count(*) from common_test_case_base b  WHERE b.type = 2 " +
+                    " and (b.category & :#{#query.env}) > 0 " +
+                    " and (b.category & :#{#query.device}) > 0 " +
+                    " and (:#{#query.description} is null or :#{#query.description.trim()} = '' or LOWER(b.description) like CONCAT('%',LOWER(:#{#query.description.trim()}), '%'))", nativeQuery = true)
+    Page<BaseTestCase> findPage(Pageable pageable, @Param("query") BaseCaseQuery query);
 
     @Query(value = "select b.* from common_test_case_base b " +
             " where b.id not in (select t.base_case_from from test_case t where t.type = 2 and t.ticket_no = :#{#query.ticketNo}) " +

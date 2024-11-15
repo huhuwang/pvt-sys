@@ -36,7 +36,7 @@ public class CaseController {
     }
 
     @PostMapping("/base/page")
-    public HttpResult<PageResponse<BaseTestCase>> findBaseCase(@RequestBody BaseQuery query){
+    public HttpResult<PageResponse<BaseTestCase>> findBaseCase(@RequestBody BaseCaseQuery query){
         PageResponse<BaseTestCase> baseCasePage = testCaseService.findBaseCasePage(query);
         return HttpResult.returnSuccess(baseCasePage);
     }

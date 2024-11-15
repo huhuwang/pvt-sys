@@ -80,9 +80,9 @@ public class TestCaseService {
      * @param query 查询条件
      * @return 分页记录
      */
-    public PageResponse<BaseTestCase> findBaseCasePage(BaseQuery query){
+    public PageResponse<BaseTestCase> findBaseCasePage(BaseCaseQuery query){
         Pageable pageRequest = PageRequest.of(query.getPageNum() - 1, query.getPageSize());
-        Page<BaseTestCase> baseTestCases = baseTicketCaseRepository.findPage(pageRequest);
+        Page<BaseTestCase> baseTestCases = baseTicketCaseRepository.findPage(pageRequest, query);
         return new PageResponse<>(baseTestCases);
     }
 
