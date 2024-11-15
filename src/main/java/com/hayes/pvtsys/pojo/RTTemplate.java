@@ -13,25 +13,24 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Entity
-@Table(name = "deployment")
+@Table(name = "rt_summary_template")
 @Data
 @EntityListeners(AuditingEntityListener.class)
-public class Deployment implements Serializable {
+public class RTTemplate implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
     private Integer id;
 
-    @Column(name = "deployment_date")
-    @Temporal(TemporalType.DATE)
-    private Date deploymentDate;
+    @Column(name = "template_name")
+    private String templateName;
 
-    @Column(name = "deployment_name")
-    private String deploymentName;
+    @Column(name = "flow_number")
+    private Integer flowNumber;
 
-    @Column(name = "application_name")
-    private String applicationName;
+    @Column(name = "application")
+    private String application;
 
     @Column(name = "status")
     private byte status;
@@ -58,9 +57,4 @@ public class Deployment implements Serializable {
 
     @Column(name = "remark")
     private String remark;
-
-    @ManyToOne
-    @JoinColumn(name = "template_id")
-    private RTTemplate rtTemplate;
-
 }

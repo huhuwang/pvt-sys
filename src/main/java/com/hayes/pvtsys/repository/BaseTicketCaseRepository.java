@@ -20,12 +20,12 @@ public interface BaseTicketCaseRepository extends JpaRepository<BaseTestCase, In
     @Query(value = "select b.* from common_test_case_base b  WHERE b.type = 2 " +
             " and (b.category & :#{#query.env}) > 0 " +
             " and (b.category & :#{#query.device}) > 0 " +
-            " and (:#{#query.description} is null or :#{#query.description.trim()} = '' or LOWER(b.description) like CONCAT('%',LOWER(:#{#query.description.trim()}), '%')) " +
+            " and (:#{#query.description} is null or :#{#query.description} = '' or LOWER(b.description) like CONCAT('%',LOWER(:#{#query.description}), '%')) " +
             " order by b.id",
             countQuery = "select count(*) from common_test_case_base b  WHERE b.type = 2 " +
                     " and (b.category & :#{#query.env}) > 0 " +
                     " and (b.category & :#{#query.device}) > 0 " +
-                    " and (:#{#query.description} is null or :#{#query.description.trim()} = '' or LOWER(b.description) like CONCAT('%',LOWER(:#{#query.description.trim()}), '%'))", nativeQuery = true)
+                    " and (:#{#query.description} is null or :#{#query.description} = '' or LOWER(b.description) like CONCAT('%',LOWER(:#{#query.description}), '%'))", nativeQuery = true)
     Page<BaseTestCase> findPage(Pageable pageable, @Param("query") BaseCaseQuery query);
 
     @Query(value = "select b.* from common_test_case_base b " +
