@@ -13,4 +13,8 @@ public class Constants {
     public static final Integer CONSTANTS_TYPE_FLOW_STEP = 1;
 
     public static final Integer CONSTANTS_TYPE_FLOW_DATA = 2;
+
+    public static final Byte STATUS_OK = 1;
+
+    public static final Byte STATUS_NO = 2;
 }

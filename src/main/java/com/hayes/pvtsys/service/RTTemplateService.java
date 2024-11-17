@@ -44,6 +44,7 @@ public class RTTemplateService {
         template.setTemplateName(templateName);
         template.setApplication(application);
         template.setFlowNumber(flowNumber);
+        template.setStatus(Constants.STATUS_OK);
         template = rtTemplateRepository.save(template);
 
         kvRepository.deleteKVConstantsByTemplateId(template.getId());
@@ -59,7 +60,7 @@ public class RTTemplateService {
             List<KVConstants> dataKVConstants = new ArrayList<>();
             for (int i = 1; i <= flowNumber; i ++){
                 String keyName = "RT" + i;
-                String flowData = flow.get("keyName");
+                String flowData = flow.get(keyName);
                 KVConstants dataConstants = new KVConstants();
                 dataConstants.setKeyName(keyName);
                 dataConstants.setKeyValue(flowData);
@@ -70,5 +71,11 @@ public class RTTemplateService {
             }
             kvRepository.saveAll(dataKVConstants);
         }
+    }
+
+    @Transactional
+    public void deleteRTTemplate(int rtTemplateId){
+        rtTemplateRepository.deleteById(rtTemplateId);
+        kvRepository.deleteKVConstantsByTemplateId(rtTemplateId);
     }
 }

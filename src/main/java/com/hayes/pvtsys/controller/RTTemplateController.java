@@ -7,10 +7,7 @@ import com.hayes.pvtsys.query.RTTemplateQuery;
 import com.hayes.pvtsys.service.RTTemplateService;
 import com.hayes.pvtsys.util.HttpResult;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/rt")
@@ -31,5 +28,9 @@ public class RTTemplateController {
         return HttpResult.returnSuccess(true);
     }
 
-
+    @DeleteMapping("/delete/{id}")
+    public HttpResult<Boolean> deleteRTTemplate(@PathVariable("id") int rtTemplateId){
+        rtTemplateService.deleteRTTemplate(rtTemplateId);
+        return HttpResult.returnSuccess(true);
+    }
 }
