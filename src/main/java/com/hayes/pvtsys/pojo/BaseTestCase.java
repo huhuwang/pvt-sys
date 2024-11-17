@@ -49,7 +49,7 @@ public class BaseTestCase implements Serializable {
     private Integer rowHeight;
 
     @Column(name = "rt_flow")
-    private Integer rtFlow;
+    private String rtFlow;
 
     @CreatedBy
     @Column(name = "create_user")

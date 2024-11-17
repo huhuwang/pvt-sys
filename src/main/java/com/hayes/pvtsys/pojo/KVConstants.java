@@ -1,8 +1,6 @@
 package com.hayes.pvtsys.pojo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.hayes.pvtsys.enums.TestCagetoryEnum;
-import com.hayes.pvtsys.enums.TestDeviceEnum;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -13,40 +11,32 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 @Entity
-@Table(name = "test_result")
+@Table(name = "kv_constants")
 @Data
 @EntityListeners(AuditingEntityListener.class)
-public class TestResult implements Serializable {
+public class KVConstants implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "case_id")
-    private TestCase testCase;
+    @Column(name = "key_name")
+    private String keyName;
 
-    @Column(name = "category")
-    private Integer category;
+    @Column(name = "key_value")
+    private String keyValue;
 
-    @Column(name = "step")
-    private String step;
+    @Column(name = "template_id")
+    private Integer templateId;
 
-    @Column(name = "test_data")
-    private String testData;
+    @Column(name = "constant_type")
+    private Integer constantType;
 
-    @Column(name = "actual_result")
-    private String actualResult;
-
-    @Column(name = "result")
-    private Byte result;
-
-    @Column(name = "rt_flow")
-    private String rtFlow;
+    @Column(name = "parent_id")
+    private Integer parentId;
 
     @CreatedBy
     @Column(name = "create_user")
@@ -70,19 +60,4 @@ public class TestResult implements Serializable {
 
     @Column(name = "remark")
     private String remark;
-
-    @Column(name = "status")
-    private byte status;
-
-    @OneToMany
-    @JoinColumn(name="result_id")
-    private List<Document> documents;
-
-    public String getEnv() {
-        return TestCagetoryEnum.getEnv(this.category);
-    }
-
-    public String getDevice() {
-        return TestDeviceEnum.getDevice(this.category);
-    }
 }

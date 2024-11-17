@@ -1,6 +1,7 @@
 package com.hayes.pvtsys.controller;
 
 import com.hayes.pvtsys.dto.PageResponse;
+import com.hayes.pvtsys.dto.RTTemplateDto;
 import com.hayes.pvtsys.pojo.RTTemplate;
 import com.hayes.pvtsys.query.RTTemplateQuery;
 import com.hayes.pvtsys.service.RTTemplateService;
@@ -23,4 +24,12 @@ public class RTTemplateController {
         PageResponse<RTTemplate> page = rtTemplateService.findPage(query);
         return HttpResult.returnSuccess(page);
     }
+
+    @PostMapping("/add")
+    public HttpResult<Boolean> addRTTemplate(@RequestBody RTTemplateDto rtTemplateDto){
+        rtTemplateService.addRTTemplate(rtTemplateDto);
+        return HttpResult.returnSuccess(true);
+    }
+
+
 }

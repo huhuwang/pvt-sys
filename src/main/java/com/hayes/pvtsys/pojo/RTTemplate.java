@@ -11,6 +11,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "rt_summary_template")
@@ -38,6 +39,10 @@ public class RTTemplate implements Serializable {
     @CreatedBy
     @Column(name = "create_user")
     private String createUser;
+
+    @OneToMany
+    @JoinColumn(name = "template_id")
+    private List<KVConstants> kvConstants;
 
     @CreationTimestamp
     @Column(name = "create_time")

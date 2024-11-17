@@ -142,7 +142,7 @@ public class TestCaseService {
         }
     }
 
-    private List<TestResult> createResults(int category, TestCase testCase, Integer rtFlow){
+    private List<TestResult> createResults(int category, TestCase testCase, String rtFlow){
         List<Integer> envList = TestCagetoryEnum.getAllEnvValue(category);
         List<Integer> deviceList = TestDeviceEnum.getAllDeviceValue(category);
         List<TestResult> results = new ArrayList<>();
