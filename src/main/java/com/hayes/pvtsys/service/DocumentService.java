@@ -69,8 +69,6 @@ public class DocumentService {
             Document documentClone = ObjectUtil.cloneByStream(document);
             documentClone.setUrl(ServerPath.partTomcat() + serverPath);
 
-            System.out.println(document);
-            System.out.println(documentClone);
             return documentClone;
         }
         throw new RuntimeException("上传失败");

@@ -17,4 +17,6 @@ public class Constants {
     public static final Byte STATUS_OK = 1;
 
     public static final Byte STATUS_NO = 2;
+
+    public static final String KV_MAIN_NAME = "flowPoint";
 }

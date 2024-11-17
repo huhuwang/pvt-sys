@@ -1,6 +1,7 @@
 package com.hayes.pvtsys.controller;
 
 import com.hayes.pvtsys.dto.PageResponse;
+import com.hayes.pvtsys.dto.RTTemplateDetail;
 import com.hayes.pvtsys.dto.RTTemplateDto;
 import com.hayes.pvtsys.pojo.RTTemplate;
 import com.hayes.pvtsys.query.RTTemplateQuery;
@@ -31,6 +32,18 @@ public class RTTemplateController {
     @DeleteMapping("/delete/{id}")
     public HttpResult<Boolean> deleteRTTemplate(@PathVariable("id") int rtTemplateId){
         rtTemplateService.deleteRTTemplate(rtTemplateId);
+        return HttpResult.returnSuccess(true);
+    }
+
+    @GetMapping("/query/{id}")
+    private HttpResult<RTTemplateDetail> queryRTTemplateDetail(@PathVariable("id") int rtTemplateId){
+        RTTemplateDetail detail = rtTemplateService.queryRTTemplateDetail(rtTemplateId);
+        return HttpResult.returnSuccess(detail);
+    }
+
+    @PostMapping("/copy/{id}")
+    private HttpResult<Boolean> copyRTTemplateDetail(@PathVariable("id") int rtTemplateId){
+        rtTemplateService.cloneFromOldOne(rtTemplateId);
         return HttpResult.returnSuccess(true);
     }
 }

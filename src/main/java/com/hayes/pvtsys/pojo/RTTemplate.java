@@ -33,16 +33,16 @@ public class RTTemplate implements Serializable {
     @Column(name = "application")
     private String application;
 
+    @OneToMany
+    @JoinColumn(name = "template_id")
+    private List<KVConstants> kvConstants;
+
     @Column(name = "status")
     private byte status;
 
     @CreatedBy
     @Column(name = "create_user")
     private String createUser;
-
-    @OneToMany
-    @JoinColumn(name = "template_id")
-    private List<KVConstants> kvConstants;
 
     @CreationTimestamp
     @Column(name = "create_time")
