@@ -9,6 +9,8 @@ import java.util.Map;
 @Data
 public class RTTemplateDto implements Serializable {
 
+    private Integer id;
+
     private String templateName;
 
     private Integer flowNumber;

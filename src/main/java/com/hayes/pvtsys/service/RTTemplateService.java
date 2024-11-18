@@ -1,13 +1,10 @@
 package com.hayes.pvtsys.service;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.core.util.StrUtil;
 import com.hayes.pvtsys.dto.PageResponse;
 import com.hayes.pvtsys.dto.RTTemplateDetail;
 import com.hayes.pvtsys.dto.RTTemplateDto;
 import com.hayes.pvtsys.enums.Constants;
-import com.hayes.pvtsys.pojo.Document;
 import com.hayes.pvtsys.pojo.KVConstants;
 import com.hayes.pvtsys.pojo.RTTemplate;
 import com.hayes.pvtsys.query.RTTemplateQuery;
@@ -40,10 +37,16 @@ public class RTTemplateService {
 
     @Transactional
     public void addRTTemplate(RTTemplateDto rtTemplateDto){
+        Integer id = rtTemplateDto.getId();
+        RTTemplate template;
+        if (id != null){
+            template = rtTemplateRepository.findById(id).orElse(new RTTemplate());
+        } else {
+            template = new RTTemplate();
+        }
         String templateName = rtTemplateDto.getTemplateName();
         String application = rtTemplateDto.getApplication();
         Integer flowNumber = rtTemplateDto.getFlowNumber();
-        RTTemplate template = new RTTemplate();
         template.setTemplateName(templateName);
         template.setApplication(application);
         template.setFlowNumber(flowNumber);
@@ -119,14 +122,17 @@ public class RTTemplateService {
     }
 
 
+    @Transactional
     public void cloneFromOldOne(int rtTemplateId){
         RTTemplate template = rtTemplateRepository.findById(rtTemplateId).orElseThrow();
-        RTTemplate newRTTemplate = ObjectUtil.cloneByStream(template);
-        newRTTemplate.setId(null);
+        RTTemplate newRTTemplate = new RTTemplate();
+        newRTTemplate.setTemplateName(template.getTemplateName());
+        newRTTemplate.setApplication(template.getApplication());
+        newRTTemplate.setFlowNumber(template.getFlowNumber());
+        newRTTemplate.setStatus(Constants.STATUS_OK);
         newRTTemplate = rtTemplateRepository.save(newRTTemplate);
 
-        List<KVConstants> newKvConstants = new ArrayList<>();
-        List<KVConstants> kvConstants = newRTTemplate.getKvConstants();
+        List<KVConstants> kvConstants = template.getKvConstants();
         if (CollUtil.isNotEmpty(kvConstants)){
             Map<Integer,  List<KVConstants>> allData = new LinkedHashMap<>();
             for (KVConstants kv : kvConstants){
@@ -143,13 +149,33 @@ public class RTTemplateService {
             for (Map.Entry<Integer, List<KVConstants>> entry : allData.entrySet()) {
                 Integer mainId = entry.getKey();
                 List<KVConstants> KVConstantsList = entry.getValue();
-                for (KVConstants kv : KVConstantsList){
-                    //TODO
-                }
+                KVConstants mainKV = KVConstantsList.stream().filter(e -> e.getId().equals(mainId)).toList().get(0);
+                List<KVConstants> childList = KVConstantsList.stream().filter(e -> !e.getId().equals(mainId)).toList();
+
+                KVConstants parent = new KVConstants();
+                parent.setTemplateId(newRTTemplate.getId());
+                parent.setKeyName(mainKV.getKeyName());
+                parent.setKeyValue(mainKV.getKeyValue());
+                parent.setConstantType(Constants.CONSTANTS_TYPE_FLOW_STEP);
+                parent = kvRepository.save(parent);
+                List<KVConstants> childDataList = getKvConstants(childList, newRTTemplate.getId(), parent.getId());
+                kvRepository.saveAll(childDataList);
             }
         }
+    }
 
-        System.out.println(kvConstants);
+        private static List<KVConstants> getKvConstants(List<KVConstants> childList,Integer templateId, Integer parentId) {
+        List<KVConstants> childDataList = new ArrayList<>();
+        for (KVConstants kv : childList){
+            KVConstants child = new KVConstants();
+            child.setKeyName(kv.getKeyName());
+            child.setKeyValue(kv.getKeyValue());
+            child.setTemplateId(templateId);
+            child.setParentId(parentId);
+            child.setConstantType(Constants.CONSTANTS_TYPE_FLOW_DATA);
+            childDataList.add(child);
+        }
+        return childDataList;
     }
 
     private void  createFlowData(Map<Integer, Map<String,String>> res, Integer id, String k, String v){
