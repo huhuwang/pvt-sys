@@ -173,6 +173,13 @@ public class RTTemplateService {
        return rtTemplateRepository.findRTTemplateByApplicationAndStatusOrderByIdDesc(application, Constants.STATUS_OK);
     }
 
+    public void updateStatus(int rtTemplateId){
+        RTTemplate template = rtTemplateRepository.findById(rtTemplateId).orElseThrow();
+        byte status = template.getStatus(); //1 2
+        byte newStatus = (byte) (status % 2 + 1);
+        template.setStatus(newStatus);
+        rtTemplateRepository.save(template);
+    }
     private static List<KVConstants> getKvConstants(List<KVConstants> childList,Integer templateId, Integer parentId) {
         List<KVConstants> childDataList = new ArrayList<>();
         for (KVConstants kv : childList){

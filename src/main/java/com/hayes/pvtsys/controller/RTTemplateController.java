@@ -54,4 +54,10 @@ public class RTTemplateController {
         List<RTTemplate> rtTemplates = rtTemplateService.queryRTTemplateByApplicationAndStatus(query);
         return HttpResult.returnSuccess(rtTemplates);
     }
+
+    @PostMapping("/status/{id}")
+    public HttpResult<Boolean> updateStatus(@PathVariable("id") int rtTemplateId){
+        rtTemplateService.updateStatus(rtTemplateId);
+        return HttpResult.returnSuccess(true);
+    }
 }
