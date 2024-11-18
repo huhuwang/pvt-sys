@@ -10,6 +10,8 @@ import com.hayes.pvtsys.util.HttpResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/rt")
 public class RTTemplateController {
@@ -36,14 +38,20 @@ public class RTTemplateController {
     }
 
     @GetMapping("/query/{id}")
-    private HttpResult<RTTemplateDetail> queryRTTemplateDetail(@PathVariable("id") int rtTemplateId){
+    public HttpResult<RTTemplateDetail> queryRTTemplateDetail(@PathVariable("id") int rtTemplateId){
         RTTemplateDetail detail = rtTemplateService.queryRTTemplateDetail(rtTemplateId);
         return HttpResult.returnSuccess(detail);
     }
 
     @PostMapping("/copy/{id}")
-    private HttpResult<Boolean> copyRTTemplateDetail(@PathVariable("id") int rtTemplateId){
+    public HttpResult<Boolean> copyRTTemplateDetail(@PathVariable("id") int rtTemplateId){
         rtTemplateService.cloneFromOldOne(rtTemplateId);
         return HttpResult.returnSuccess(true);
+    }
+
+    @PostMapping("/query/with/application")
+    public HttpResult<List<RTTemplate>> queryRTTemplateByApplicationAndStatus(@RequestBody RTTemplateQuery query){
+        List<RTTemplate> rtTemplates = rtTemplateService.queryRTTemplateByApplicationAndStatus(query);
+        return HttpResult.returnSuccess(rtTemplates);
     }
 }

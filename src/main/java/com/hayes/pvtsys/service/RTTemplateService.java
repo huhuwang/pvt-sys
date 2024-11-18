@@ -164,7 +164,16 @@ public class RTTemplateService {
         }
     }
 
-        private static List<KVConstants> getKvConstants(List<KVConstants> childList,Integer templateId, Integer parentId) {
+    public List<RTTemplate> queryRTTemplateByApplicationAndStatus(RTTemplateQuery query){
+        List<String> applications = query.getApplication();
+        String application = null;
+        if (CollUtil.isNotEmpty(applications)){
+            application = applications.get(0);
+        }
+       return rtTemplateRepository.findRTTemplateByApplicationAndStatusOrderByIdDesc(application, Constants.STATUS_OK);
+    }
+
+    private static List<KVConstants> getKvConstants(List<KVConstants> childList,Integer templateId, Integer parentId) {
         List<KVConstants> childDataList = new ArrayList<>();
         for (KVConstants kv : childList){
             KVConstants child = new KVConstants();
