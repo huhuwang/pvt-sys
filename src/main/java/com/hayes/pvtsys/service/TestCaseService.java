@@ -10,9 +10,11 @@ import com.hayes.pvtsys.dto.TestResultDto;
 import com.hayes.pvtsys.enums.Constants;
 import com.hayes.pvtsys.enums.TestCagetoryEnum;
 import com.hayes.pvtsys.enums.TestDeviceEnum;
-import com.hayes.pvtsys.pojo.*;
+import com.hayes.pvtsys.pojo.BaseTestCase;
+import com.hayes.pvtsys.pojo.TestCase;
+import com.hayes.pvtsys.pojo.TestResult;
+import com.hayes.pvtsys.pojo.Ticket;
 import com.hayes.pvtsys.query.BaseCaseQuery;
-import com.hayes.pvtsys.query.BaseQuery;
 import com.hayes.pvtsys.query.CaseQuery;
 import com.hayes.pvtsys.repository.BaseTicketCaseRepository;
 import com.hayes.pvtsys.repository.TicketCaseRepository;
@@ -26,8 +28,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Service
 public class TestCaseService {

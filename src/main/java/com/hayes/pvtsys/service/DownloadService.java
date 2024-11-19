@@ -3,9 +3,11 @@ package com.hayes.pvtsys.service;
 import cn.hutool.core.util.StrUtil;
 import com.hayes.pvtsys.enums.ExcelTitleEnum;
 import com.hayes.pvtsys.enums.TestDeviceEnum;
+import com.hayes.pvtsys.pojo.Deployment;
 import com.hayes.pvtsys.pojo.Document;
 import com.hayes.pvtsys.pojo.TestCase;
 import com.hayes.pvtsys.pojo.TestResult;
+import com.hayes.pvtsys.repository.DeploymentRepository;
 import com.hayes.pvtsys.repository.TicketResultRepository;
 import com.hayes.pvtsys.util.ServerPath;
 import jakarta.servlet.http.HttpServletResponse;
@@ -33,6 +35,9 @@ public class DownloadService {
 
     @Autowired
     private TicketResultRepository ticketResultRepository;
+
+    @Autowired
+    private DeploymentRepository deploymentRepository;
 
     public void downloadSU(HttpServletResponse response, String ticketNO, int env){
         HttpClient client = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(10)).build();
@@ -112,6 +117,11 @@ public class DownloadService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void downloadRT(HttpServletResponse response, Integer deploymentId){
+        Deployment deployment = deploymentRepository.findById(deploymentId).orElseThrow();
+
     }
 
     private void writeToBrose(HttpServletResponse response, XSSFWorkbook workbook, String ticketNo){
