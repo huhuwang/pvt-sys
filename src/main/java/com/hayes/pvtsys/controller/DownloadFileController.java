@@ -1,11 +1,14 @@
 package com.hayes.pvtsys.controller;
 
 
+import com.hayes.pvtsys.query.DownloadQuery;
 import com.hayes.pvtsys.service.DownloadService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller

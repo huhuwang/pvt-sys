@@ -1,16 +1,19 @@
 package com.hayes.pvtsys.service;
 
+import cn.hutool.core.util.StrUtil;
 import com.hayes.pvtsys.enums.ExcelTitleEnum;
 import com.hayes.pvtsys.enums.TestDeviceEnum;
 import com.hayes.pvtsys.pojo.Document;
 import com.hayes.pvtsys.pojo.TestCase;
 import com.hayes.pvtsys.pojo.TestResult;
-import com.hayes.pvtsys.query.DownloadQuery;
 import com.hayes.pvtsys.repository.TicketResultRepository;
 import com.hayes.pvtsys.util.ServerPath;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
+import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,8 +35,6 @@ public class DownloadService {
     private TicketResultRepository ticketResultRepository;
 
     public void downloadSU(HttpServletResponse response, String ticketNO, int env){
-//        String ticketNO = query.getTicketNo();
-//        Integer evn = query.getEnv();
         HttpClient client = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(10)).build();
         TestDeviceEnum[] devices = TestDeviceEnum.values();
         try(XSSFWorkbook workbook = new XSSFWorkbook()){
@@ -89,9 +90,9 @@ public class DownloadService {
                     cell4.setCellStyle(style);
                     cell4.setCellValue(testCase.getExpectedResult());
 
-                    int pass = result.getResult();
+                    Byte pass = result.getResult();
                     Cell cell5 = rowData.createCell(5);
-                    CellStyle color = buildCellStyleBackGround(workbook, pass == 1 ? "green" : pass == 2 ? "red" : null);
+                    CellStyle color = buildCellStyleBackGround(workbook, pass == null ? null: pass == 1 ? "green" : pass == 2 ? "red" : null);
                     cell5.setCellStyle(color);
                     cell5.setCellValue(formatPass(result.getResult()));
 
@@ -119,6 +120,7 @@ public class DownloadService {
             String filename = ticketNo + ".xlsx";
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
+            response.setHeader("Access-Control-Allow-Origin","*");
             response.setContentType("application/vnd.ms-excel;charset=gb2312");
             workbook.write(os);
             os.flush();
@@ -138,28 +140,30 @@ public class DownloadService {
             throw new RuntimeException(e);
         }
     }
-
-
     private CellStyle buildCellStyleBackGround(XSSFWorkbook workbook, String colorSetting){
         CellStyle style = workbook.createCellStyle();
-        XSSFColor color = new XSSFColor();
-        if ("green".equalsIgnoreCase(colorSetting)){
-            color.setRGB(new byte[]{0, (byte)255,0});
-        } else if ("red".equalsIgnoreCase(colorSetting)){
-            color.setRGB(new byte[]{(byte)255, 0,0});
-        } else if ("blue".equalsIgnoreCase(colorSetting)){
-            color.setRGB(new byte[]{(byte)26, (byte)198, (byte)255});
+        if (StrUtil.isNotBlank(colorSetting)){
+            XSSFColor color = new XSSFColor();
+            if ("green".equalsIgnoreCase(colorSetting)){
+                color.setRGB(new byte[]{0, (byte)255,0});
+            } else if ("red".equalsIgnoreCase(colorSetting)){
+                color.setRGB(new byte[]{(byte)255, 0,0});
+            } else if ("blue".equalsIgnoreCase(colorSetting)){
+                color.setRGB(new byte[]{(byte)26, (byte)198, (byte)255});
+            }
+            style.setFillForegroundColor(color);
+            style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         }
-        style.setFillForegroundColor(color);
-        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         return style;
     }
 
-    private String formatPass(int pass){
-        if (pass == 1){
-            return "PASS";
-        } else if (pass == 2){
-            return "NO PASS";
+    private String formatPass(Byte pass){
+        if (pass != null){
+            if (pass == 1){
+                return "PASS";
+            } else if (pass == 2){
+                return "NO PASS";
+            }
         }
         return null;
     }
