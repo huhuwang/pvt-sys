@@ -26,4 +26,7 @@ public interface TicketResultRepository extends JpaRepository<TestResult, Intege
 
     @Query(value = "select count(*) from TestResult t where t.testCase.id = :caseId")
     int countByCase(@Param("caseId") int caseId);
+
+    @Query(value = "select t from TestResult t where t.testCase.ticketNo = :ticketNo AND t.category = :evn")
+    List<TestResult> findTestResultByEnvAndTicket(@Param("ticketNo") String ticketNo, @Param("evn") Integer evn);
 }

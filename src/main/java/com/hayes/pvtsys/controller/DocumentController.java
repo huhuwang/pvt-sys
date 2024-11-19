@@ -20,7 +20,7 @@ public class DocumentController {
         return HttpResult.returnSuccess(document);
     }
 
-    @DeleteMapping("delete/{documentId}")
+    @DeleteMapping("/delete/{documentId}")
     public HttpResult<Boolean> deleteFile(@PathVariable("documentId") String documentId){
         documentService.deleteDocument(documentId);
         return HttpResult.returnSuccess(true);
