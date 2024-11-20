@@ -23,4 +23,9 @@ public class DownloadFileController {
     public void downloadRT(HttpServletResponse response, Integer deploymentId){
         downloadService.downloadRT(response, deploymentId);
     }
+
+    @GetMapping("/pvt")
+    public void downloadPVT(HttpServletResponse response, Integer deploymentId){
+
+    }
 }

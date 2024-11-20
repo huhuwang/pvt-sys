@@ -201,6 +201,13 @@ public class DownloadService {
         }
     }
 
+
+    public void downloadPVT(HttpServletResponse response, Integer deploymentId){
+        Deployment deployment = deploymentRepository.findById(deploymentId).orElseThrow();
+        List<Ticket> tickets = ticketRepository.findTicketByDeploymentIdOrderByCreateTimeDescIdDesc(deploymentId);
+
+    }
+
     private void createFirstSheet(XSSFWorkbook workbook, RTTemplate rtTemplate){
         XSSFSheet sheet = workbook.createSheet(rtTemplate.getTemplateName());
         int flowNumber = rtTemplate.getFlowNumber();
