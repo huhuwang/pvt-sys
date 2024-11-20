@@ -16,7 +16,7 @@ import java.util.List;
 public interface TicketResultRepository extends JpaRepository<TestResult, Integer> {
 
     @Query(value = "SELECT r.id from test_result r INNER JOIN test_case c on c.id = r.case_id " +
-            " WHERE c.ticket_no = :#{#query.ticketNo} and (r.category & :#{#query.env}) > 0 and (r.category & :#{#query.device}) > 0 order by c.create_time desc, r.id", nativeQuery = true)
+            " WHERE c.ticket_no = :#{#query.ticketNo} and (r.category & :#{#query.env}) > 0 and (r.category & :#{#query.device}) > 0 order by c.create_time, r.id", nativeQuery = true)
     List<Integer> queryCaseId(@Param("query") CaseQuery query);
 
     @Modifying
