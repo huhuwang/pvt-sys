@@ -11,14 +11,20 @@ import java.util.List;
 public enum ExcelTitleEnum {
 
     TC_ID("TCID", 1500, 7),
-    DESCRIPTION("Test Description", 10000, 3),
     SUMMARY("Summary", 10000, 4),
+    DESCRIPTION("Test Description", 10000, 7),
+    REPORT("Report", 1,4),
+    LABELS("Labels", 1,4),
+    PRIORITY("Priority", 1,4),
+    IS_AUTOMATED("Is_Automated", 1,4),
+    TESTING_TYPE("Testing_Type", 1,4),
     ACTION("Action", 10000, 4),
     STEP("Step", 10000, 3),
-    DATA("Data", 10000, 7),
+    DATA("Data", 10000, 3),
     EXPECTED("Expected Result", 8000, 7),
+    DATA_RT("Data", 10000, 4),
     RESULT("Test Result", 2500, 3),
-    ACTUAL_RESULT("Actual Result", 1500, 4),
+    ACTUAL_RESULT("Actual Result", 3000, 4),
     REMARK("REMARK", 10000, 4),
     EVIDENCE("Evidence", 18000, 7);
 

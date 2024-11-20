@@ -21,6 +21,6 @@ public class DownloadFileController {
 
     @GetMapping("/rt")
     public void downloadRT(HttpServletResponse response, Integer deploymentId){
-
+        downloadService.downloadRT(response, deploymentId);
     }
 }
