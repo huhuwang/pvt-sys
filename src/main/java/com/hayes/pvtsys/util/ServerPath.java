@@ -1,7 +1,5 @@
 package com.hayes.pvtsys.util;
 
-import org.springframework.beans.factory.annotation.Value;
-
 public class ServerPath {
     private static final String OUT_PATH = "D:/study/tomcat/apache-tomcat/webapps/";
     private static final String TOMCAT_URL = "http://localhost:8090/";

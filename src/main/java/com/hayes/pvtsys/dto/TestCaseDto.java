@@ -1,7 +1,6 @@
 package com.hayes.pvtsys.dto;
 
 import cn.hutool.core.util.StrUtil;
-import jakarta.persistence.Column;
 import lombok.Data;
 
 import java.io.Serializable;

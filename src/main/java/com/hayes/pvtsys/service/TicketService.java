@@ -2,11 +2,9 @@ package com.hayes.pvtsys.service;
 
 
 import cn.hutool.core.io.FileUtil;
-import com.hayes.pvtsys.pojo.TestCase;
 import com.hayes.pvtsys.pojo.Ticket;
 import com.hayes.pvtsys.repository.TicketCaseRepository;
 import com.hayes.pvtsys.repository.TicketRepository;
-import com.hayes.pvtsys.repository.TicketResultRepository;
 import com.hayes.pvtsys.util.ServerPath;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
