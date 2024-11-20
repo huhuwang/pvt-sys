@@ -252,7 +252,7 @@ public class DownloadService {
 
     private void createTitle(XSSFWorkbook workbook, XSSFSheet sheet, int env){
         Row rowTitle = sheet.createRow(0);
-        List<ExcelTitleEnum> titles = ExcelTitleEnum.allEnv(4);
+        List<ExcelTitleEnum> titles = ExcelTitleEnum.allEnv(env);
         for (int i = 0; i < titles.size(); i++){
             ExcelTitleEnum title = titles.get(i);
             sheet.setColumnWidth(i, title.getWidth());
