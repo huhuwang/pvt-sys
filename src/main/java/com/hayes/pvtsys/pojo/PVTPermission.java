@@ -59,6 +59,4 @@ public class PVTPermission implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updateTime;
 
-    @OneToMany(mappedBy = "permission", cascade = {CascadeType.ALL}, orphanRemoval = true)
-    private List<PVTRolePermission> rps;
 }

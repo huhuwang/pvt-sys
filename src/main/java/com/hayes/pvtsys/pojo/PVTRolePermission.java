@@ -19,13 +19,14 @@ public class PVTRolePermission implements Serializable {
     @Column
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "principal_id")
-    private PVTRole role;
+    @Column(name = "principal_id")
+    private Integer principalId;
 
-    @ManyToOne
-    @JoinColumn(name = "permission_id")
-    private PVTPermission permission;
+    @Column(name = "permission_id")
+    private Integer permissionId;
+
+    @Column(name = "principal_type")
+    private Integer principalType;
 
     @CreationTimestamp
     @Column(name = "create_time")

@@ -38,8 +38,4 @@ public class PVTRole implements Serializable {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updateTime;
-
-    @OneToMany(mappedBy = "role", cascade = {CascadeType.ALL}, orphanRemoval = true)
-    private List<PVTRolePermission> rps;
-
 }

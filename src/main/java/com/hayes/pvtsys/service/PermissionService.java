@@ -18,6 +18,10 @@ public class PermissionService {
         return permissionRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
     }
 
+    public List<PVTPermission> queryAllPermissionsByRole(Integer roleId){
+        return permissionRepository.queryAllByRole(roleId);
+    }
+
     public void addPermissions(List<PVTPermission> permissions){
         permissionRepository.saveAll(permissions);
     }

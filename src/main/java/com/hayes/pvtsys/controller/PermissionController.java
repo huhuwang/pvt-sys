@@ -21,6 +21,12 @@ public class PermissionController {
         return HttpResult.returnSuccess(pvtPermissions);
     }
 
+    @GetMapping("/query/{roleId}")
+    public HttpResult<List<PVTPermission>> queryByRole(@PathVariable("roleId") Integer roleId){
+        List<PVTPermission> pvtPermissions = permissionService.queryAllPermissionsByRole(roleId);
+        return HttpResult.returnSuccess(pvtPermissions);
+    }
+
     @PostMapping("/add")
     public HttpResult<Boolean> addRoles(@RequestBody List<PVTPermission> permissions){
         permissionService.addPermissions(permissions);

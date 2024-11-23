@@ -1,5 +1,6 @@
 package com.hayes.pvtsys.controller;
 
+import com.hayes.pvtsys.dto.PermissionDto;
 import com.hayes.pvtsys.pojo.PVTRole;
 import com.hayes.pvtsys.service.RoleService;
 import com.hayes.pvtsys.util.HttpResult;
@@ -30,6 +31,12 @@ public class RoleController {
     @DeleteMapping("/delete/{roleId}")
     public HttpResult<Boolean> deleteRole(@PathVariable("roleId") Integer roleId){
         roleService.deleteRole(roleId);
+        return HttpResult.returnSuccess(true);
+    }
+
+    @PostMapping("/permission/setting")
+    public HttpResult<Boolean> setPermission(@RequestBody PermissionDto permissionDto){
+        roleService.setPermission(permissionDto);
         return HttpResult.returnSuccess(true);
     }
 
