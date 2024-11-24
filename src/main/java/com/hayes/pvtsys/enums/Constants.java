@@ -21,4 +21,6 @@ public class Constants {
     public static final String KV_MAIN_NAME = "flowPoint";
 
     public static final Integer PRINCIPAL_TYPE_ROLE = 1;
+
+    public static final String ACCESS_FORBIDDEN = "您的权限不足";
 }

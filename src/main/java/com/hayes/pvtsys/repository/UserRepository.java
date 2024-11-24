@@ -15,4 +15,6 @@ public interface UserRepository extends JpaRepository<PVTUser, Integer> {
             " and (:#{#query.role} is null or u.role.id = :#{#query.role})")
     Page<PVTUser> findPage(Pageable pageable, @Param("query") UserQuery query);
 
+    PVTUser findPVTUserByAccount(String account);
+
 }
