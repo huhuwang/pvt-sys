@@ -44,11 +44,13 @@ public class SecurityConfig {
     public SecurityFilterChain configure(HttpSecurity http) throws Exception {
         return http.csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> authorizationManagerRequestMatcherRegistry.requestMatchers("**/static/**").permitAll()
+                .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> authorizationManagerRequestMatcherRegistry.requestMatchers("/static/*").permitAll()
+                        .requestMatchers("/*").permitAll()
                         .requestMatchers(HttpMethod.POST, "/login").permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(httpSecurityExceptionHandlingConfigurer -> httpSecurityExceptionHandlingConfigurer.authenticationEntryPoint(authenticationEntryPoint)
-                .accessDeniedHandler(accessDeniedHandler)).addFilterBefore(jwtFliter, UsernamePasswordAuthenticationFilter.class)
+                .accessDeniedHandler(accessDeniedHandler))
+                .addFilterBefore(jwtFliter, UsernamePasswordAuthenticationFilter.class)
                 .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource())).build();
     }
 
@@ -61,7 +63,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource(){
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
-   //     config.setAllowedOrigins(Collections.singletonList("*")); // 允许任何源
+        config.setAllowedOrigins(Collections.singletonList("*")); // 允许任何源
         config.setAllowedOriginPatterns(Collections.singletonList("*"));
         config.setAllowedHeaders(Collections.singletonList("*")); // 允许任何头
         config.setAllowedMethods(Collections.singletonList("*")); // 允许任何方法

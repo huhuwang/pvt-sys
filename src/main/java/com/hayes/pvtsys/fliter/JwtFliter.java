@@ -21,18 +21,11 @@ public class JwtFliter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         //获取token
-        String token = request.getHeader("Authentication");
+        String token = request.getHeader("Authorization");
         if (StringUtils.isBlank(token)){
-            //没有token放行，是因为后面的逻辑需要对token解析，没有token就不行了
-            //放行没有问题因为后面的fliter会对进行认证，没有token会直接异常
-            //该fliter主要是解析token的，不是认证的
-            //加return是为了fliter回来的时候不在继续往下执行
             filterChain.doFilter(request, response);
             return;
         }
-
-        //解析token
-        //如果退出之后再登录，我用之前的老token还是可以认证成功。所以redis能否使用token（hash）作为key
         UserDto loginUser;
         try {
             JWT jwt = JWTUtil.parseToken(token);

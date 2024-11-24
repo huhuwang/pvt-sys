@@ -1,11 +1,13 @@
 package com.hayes.pvtsys.util;
 
 import com.hayes.pvtsys.enums.ResponseEnum;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
 
+@Data
 @NoArgsConstructor
 public class HttpResult<T> implements Serializable {
 	
@@ -63,30 +65,6 @@ public class HttpResult<T> implements Serializable {
 
     public static <T> HttpResult<T> returnFail(ResponseEnum responseEnum) {
         return returnFail(responseEnum, null);
-    }
-    
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public T getDatas() {
-        return datas;
-    }
-
-    public void setDatas(T datas) {
-        this.datas = datas;
     }
 
 }
