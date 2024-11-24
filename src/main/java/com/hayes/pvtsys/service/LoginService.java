@@ -22,7 +22,7 @@ public class LoginService {
 
     public String login(LoginQuery query){
 
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(query.getAccount(), SecureUtil.sha256(query.getPassword()));
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(query.getAccount(), query.getPassword());
         Authentication authentication = authenticationManager.authenticate(token);
         if (authentication == null){
             //认证没有通过

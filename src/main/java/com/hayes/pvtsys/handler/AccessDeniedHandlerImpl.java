@@ -1,6 +1,7 @@
 package com.hayes.pvtsys.handler;
 
 import cn.hutool.http.HttpStatus;
+import cn.hutool.json.JSONUtil;
 import com.hayes.pvtsys.enums.Constants;
 import com.hayes.pvtsys.util.HttpResult;
 import com.hayes.pvtsys.util.WebUtil;
@@ -24,6 +25,6 @@ public class AccessDeniedHandlerImpl implements AccessDeniedHandler {
         httpResult.setCode(String.valueOf(HttpStatus.HTTP_FORBIDDEN));
         httpResult.setMessage(Constants.ACCESS_FORBIDDEN);
 
-        WebUtil.response(response, httpResult.toString());
+        WebUtil.response(response, JSONUtil.toJsonStr(httpResult));
     }
 }

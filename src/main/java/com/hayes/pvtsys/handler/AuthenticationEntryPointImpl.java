@@ -1,6 +1,7 @@
 package com.hayes.pvtsys.handler;
 
 import cn.hutool.http.HttpStatus;
+import cn.hutool.json.JSONUtil;
 import com.hayes.pvtsys.util.HttpResult;
 import com.hayes.pvtsys.util.WebUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,6 +22,6 @@ public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
         HttpResult httpResult = new HttpResult();
         httpResult.setCode(String.valueOf(HttpStatus.HTTP_UNAUTHORIZED));
         httpResult.setMessage( "用户认证失败");
-        WebUtil.response(response, httpResult.toString());
+        WebUtil.response(response, JSONUtil.toJsonStr(httpResult));
     }
 }
