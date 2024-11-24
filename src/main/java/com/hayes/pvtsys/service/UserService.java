@@ -26,10 +26,19 @@ public class UserService {
     }
 
     public void addUser(PVTUser user){
-        String password = user.getPassword();
-        String newPassword = SecureUtil.sha256(password);
-        user.setPassword(newPassword);
-        userRepository.save(user);
+        if (user.getId() != null){
+            PVTUser pvtUser = userRepository.findById(user.getId()).orElseThrow();
+            pvtUser.setAccount(user.getAccount());
+            pvtUser.setUserName(user.getUserName());
+            pvtUser.setNickName(user.getNickName());
+            pvtUser.setRole(user.getRole());
+            userRepository.save(pvtUser);
+        } else {
+            String password = user.getPassword();
+            String newPassword = SecureUtil.sha256(password);
+            user.setPassword(newPassword);
+            userRepository.save(user);
+        }
     }
 
     public void deleteUser(Integer userId){

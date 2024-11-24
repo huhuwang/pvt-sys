@@ -15,4 +15,9 @@ public interface RolePermissionRepository extends JpaRepository<PVTRolePermissio
     @Query(value = "delete from PVTRolePermission WHERE principalId = :role")
     void deletePVTRolePermissionByRoleID(@Param("role") Integer role);
 
+    @Modifying
+    @Transactional
+    @Query(value = "delete from PVTRolePermission WHERE permissionId = :permission")
+    void deletePVTRolePermissionByPermissionID(@Param("permission") Integer permission);
+
 }

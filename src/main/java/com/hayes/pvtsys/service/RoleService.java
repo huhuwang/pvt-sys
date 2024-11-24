@@ -36,8 +36,10 @@ public class RoleService {
         roleRepository.saveAll(roles);
     }
 
+    @Transactional
     public void deleteRole(Integer roleId){
         roleRepository.deleteById(roleId);
+        rolePermissionRepository.deletePVTRolePermissionByRoleID(roleId);
     }
 
     @Transactional
