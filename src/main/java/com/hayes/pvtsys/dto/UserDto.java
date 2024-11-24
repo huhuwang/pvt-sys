@@ -1,5 +1,6 @@
 package com.hayes.pvtsys.dto;
 
+import cn.hutool.core.collection.CollUtil;
 import com.hayes.pvtsys.pojo.PVTUser;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
@@ -26,7 +27,7 @@ public class UserDto implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if (authorities == null){
+        if (CollUtil.isEmpty(authorities)){
             authorities = permissions.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
         }
         return authorities;
