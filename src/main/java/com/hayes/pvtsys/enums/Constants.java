@@ -23,4 +23,8 @@ public class Constants {
     public static final Integer PRINCIPAL_TYPE_ROLE = 1;
 
     public static final String ACCESS_FORBIDDEN = "您的权限不足";
+
+    public static final String LOGIN_FORBIDDEN = "用户未登录";
+
+    public static final String TOKEN_FORBIDDEN = "token不合法";
 }

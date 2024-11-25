@@ -1,6 +1,8 @@
 package com.hayes.pvtsys.dto;
 
 import cn.hutool.core.collection.CollUtil;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.hayes.pvtsys.pojo.PVTUser;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,8 +20,6 @@ public class UserDto implements UserDetails {
 
     private List<String> permissions;
 
-    private List<SimpleGrantedAuthority> authorities;
-
     public UserDto(PVTUser pvtUser, List<String> permissions) {
         this.pvtUser = pvtUser;
         this.permissions = permissions;
@@ -27,10 +27,10 @@ public class UserDto implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if (CollUtil.isEmpty(authorities)){
-            authorities = permissions.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+        if (CollUtil.isEmpty(permissions)){
+           return permissions.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
         }
-        return authorities;
+        return List.of();
     }
 
     @Override

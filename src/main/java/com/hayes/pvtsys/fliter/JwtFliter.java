@@ -1,9 +1,10 @@
 package com.hayes.pvtsys.fliter;
 
+import cn.hutool.json.JSONUtil;
 import cn.hutool.jwt.JWT;
-import cn.hutool.jwt.JWTHeader;
 import cn.hutool.jwt.JWTUtil;
 import com.hayes.pvtsys.dto.UserDto;
+import com.hayes.pvtsys.enums.Constants;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,19 +23,19 @@ public class JwtFliter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         //获取token
         String token = request.getHeader("Authorization");
-        if (StringUtils.isBlank(token)){
+        if (StringUtils.isBlank(token) || request.getRequestURI().contains("/login")){
             filterChain.doFilter(request, response);
             return;
         }
         UserDto loginUser;
         try {
             JWT jwt = JWTUtil.parseToken(token);
-            loginUser = (UserDto)jwt.getPayload("loginUser");
+            loginUser = JSONUtil.toBean(JSONUtil.toJsonStr(jwt.getPayload("loginUser")), UserDto.class);
         } catch (Exception e){
-            throw new RuntimeException("token不合法");
+            throw new RuntimeException(Constants.TOKEN_FORBIDDEN);
         }
         if (loginUser == null){
-            throw new RuntimeException("用户未登录");
+            throw new RuntimeException(Constants.LOGIN_FORBIDDEN);
         }
         //这里必须用3个参数的构造方法，表示已经认证
         UsernamePasswordAuthenticationToken authenticationToken =
