@@ -27,7 +27,7 @@ public class UserDto implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if (CollUtil.isEmpty(permissions)){
+        if (CollUtil.isNotEmpty(permissions)){
            return permissions.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
         }
         return List.of();
