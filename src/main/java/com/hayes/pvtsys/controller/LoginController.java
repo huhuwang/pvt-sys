@@ -19,4 +19,10 @@ public class LoginController {
         String token = loginService.login(query);
         return HttpResult.returnSuccess(token);
     }
+
+    @PostMapping("/out")
+    public HttpResult<Boolean> loginOut(){
+        loginService.loginOut();
+        return HttpResult.returnSuccess(true);
+    }
 }
