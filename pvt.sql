@@ -1,3 +1,19 @@
+/*
+ Navicat Premium Dump SQL
+
+ Source Server         : local
+ Source Server Type    : MySQL
+ Source Server Version : 90001 (9.0.1)
+ Source Host           : localhost:3306
+ Source Schema         : pvt
+
+ Target Server Type    : MySQL
+ Target Server Version : 90001 (9.0.1)
+ File Encoding         : 65001
+
+ Date: 26/11/2024 18:58:49
+*/
+
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
@@ -89,6 +105,69 @@ CREATE TABLE `kv_constants`  (
   INDEX `parent_idx`(`parent_id` ASC) USING BTREE,
   INDEX `template_idx`(`template_id` ASC) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for pvt_permission
+-- ----------------------------
+DROP TABLE IF EXISTS `pvt_permission`;
+CREATE TABLE `pvt_permission`  (
+  `id` int NOT NULL AUTO_INCREMENT COMMENT '注释',
+  `permission_name` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '权限名称',
+  `permission_code` varchar(46) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT '权限编号',
+  `permission_url` varchar(128) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '功能url',
+  `permission_describe` varchar(128) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '权限描述',
+  `create_time` datetime NULL DEFAULT NULL COMMENT '新建时间',
+  `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `IDX_CODE`(`permission_code` ASC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for pvt_role
+-- ----------------------------
+DROP TABLE IF EXISTS `pvt_role`;
+CREATE TABLE `pvt_role`  (
+  `id` int NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `role_name` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '角色名称',
+  `role_describe` varchar(128) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '角色描述',
+  `create_time` datetime NULL DEFAULT NULL COMMENT '新建时间',
+  `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for pvt_role_permission
+-- ----------------------------
+DROP TABLE IF EXISTS `pvt_role_permission`;
+CREATE TABLE `pvt_role_permission`  (
+  `id` int NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `principal_id` int NULL DEFAULT NULL COMMENT '主体id',
+  `permission_id` int NULL DEFAULT NULL COMMENT '权限id',
+  `principal_type` tinyint NULL DEFAULT NULL COMMENT '1. 角色  2,个人  3，组织 为了方便测试这个都是1',
+  `create_time` datetime NULL DEFAULT NULL COMMENT '新建时间',
+  `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `IDX_PRINCIPAL`(`principal_id` ASC, `permission_id` ASC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for pvt_user
+-- ----------------------------
+DROP TABLE IF EXISTS `pvt_user`;
+CREATE TABLE `pvt_user`  (
+  `id` int NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `account` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT '账号',
+  `user_name` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT '用户名',
+  `nick_name` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '昵称',
+  `password` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '密码',
+  `role_id` int NOT NULL COMMENT '角色id',
+  `create_user` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '创建人id',
+  `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+  `update_user` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '修改人id',
+  `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `user_account_idx`(`account` ASC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for rt_summary_template
