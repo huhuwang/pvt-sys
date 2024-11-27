@@ -13,7 +13,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Entity
-@Table(name = "document")
+@Table(name = "pvt_document")
 @Data
 @EntityListeners(AuditingEntityListener.class)
 public class Document implements Serializable {

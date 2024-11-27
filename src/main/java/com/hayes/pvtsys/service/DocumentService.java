@@ -56,6 +56,7 @@ public class DocumentService {
                 Thumbnails.of(inputStream)
                         .forceSize(width, height)
                         .outputFormat("jpg")
+                        .outputQuality(1)
                         .toFile(fileTargetPath);
             } catch (IOException e) {
                 throw new RuntimeException(e.getMessage());
