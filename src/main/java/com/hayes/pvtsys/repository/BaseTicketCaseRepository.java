@@ -24,7 +24,7 @@ public interface BaseTicketCaseRepository extends JpaRepository<BaseTestCase, In
 
     @Query(value = "select b.* from common_test_case_base b " +
             " where b.id not in (select t.base_case_from from test_case t where t.type = 2 and t.ticket_no = :#{#query.ticketNo}) " +
-            " and (:#{#query.env} is null or b.category & :#{#query.env}) > 0 and (:#{#query.device} is null or b.category & :#{#query.device}) > 0"
+            " and (:#{#query.env} is null or (b.category & :#{#query.env}) > 0)  and (:#{#query.device} is null or (b.category & :#{#query.device}) > 0)"
             , nativeQuery = true)
     List<BaseTestCase> queryBaseExcluding(@Param("query") BaseCaseQuery query);
 
