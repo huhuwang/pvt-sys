@@ -55,6 +55,7 @@ public class TestCaseService {
         testCase.setDescription(testCaseDto.getDescription());
         testCase.setSummary(testCaseDto.getSummary());
         testCase.setExpectedResult(testCaseDto.getExpectedResult());
+        testCase.setStep(testCaseDto.getStep());
         testCase.setType(testCaseDto.getType());
         testCase.setRowHeight(testCaseDto.rowHeight());
         testCase.setPriority(testCaseDto.getPriority());
@@ -169,6 +170,7 @@ public class TestCaseService {
         testCase.setDescription(baseTestCase.getDescription());
         testCase.setSummary(baseTestCase.getSummary());
         testCase.setExpectedResult(baseTestCase.getExpectedResult());
+        testCase.setStep(baseTestCase.getStep());
         testCase.setPriority(baseTestCase.getPriority());
         testCase.setType(baseTestCase.getType());
         testCase.setRowHeight(baseTestCase.getRowHeight());

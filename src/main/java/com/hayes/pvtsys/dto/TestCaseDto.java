@@ -24,6 +24,8 @@ public class TestCaseDto implements Serializable {
 
     private String rtFlow;
 
+    private String step;
+
     public int rowHeight(){
        int describe = StrUtil.isBlank(this.description) ? 1: this.description.split("\n").length;
        int summary = StrUtil.isBlank(this.summary) ? 1: this.summary.split("\n").length;

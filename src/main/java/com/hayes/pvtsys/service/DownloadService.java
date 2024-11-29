@@ -76,7 +76,7 @@ public class DownloadService {
 
                     Cell cell2 = rowData.createCell(2);
                     cell2.setCellStyle(style);
-                    cell2.setCellValue(result.getStep());
+                    cell2.setCellValue(testCase.getStep());
 
 
                     Cell cell3 = rowData.createCell(3);
@@ -161,7 +161,7 @@ public class DownloadService {
 
                     Cell cell8 = rowData.createCell(8);
                     cell8.setCellStyle(style);
-                    cell8.setCellValue(result.getStep());
+                    cell8.setCellValue(testCase.getStep());
 
                     Cell cell9 = rowData.createCell(9);
                     cell9.setCellStyle(style);

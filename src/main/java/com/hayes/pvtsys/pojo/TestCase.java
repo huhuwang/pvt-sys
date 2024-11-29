@@ -47,6 +47,9 @@ public class TestCase implements Serializable {
     @Column(name = "base_case_from")
     private Integer baseCaseFrom;
 
+    @Column(name = "step")
+    private String step;
+
     @CreatedBy
     @Column(name = "create_user")
     private String createUser;

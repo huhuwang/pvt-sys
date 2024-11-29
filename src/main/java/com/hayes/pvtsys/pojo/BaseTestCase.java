@@ -51,6 +51,9 @@ public class BaseTestCase implements Serializable {
     @Column(name = "rt_flow")
     private String rtFlow;
 
+    @Column(name = "step")
+    private String step;
+
     @CreatedBy
     @Column(name = "create_user")
     private String createUser;

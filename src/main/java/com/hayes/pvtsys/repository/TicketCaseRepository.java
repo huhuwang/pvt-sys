@@ -14,7 +14,7 @@ public interface TicketCaseRepository extends JpaRepository<TestCase, Integer> {
 
     @Query(value = "SELECT c.id as id, c.ticket_no as ticketNo, c.description as description, c.summary as summary, " +
                 " c.expected_result as expectedResult, c.priority as priority, c.type as type, c.row_height as rowHeight, c.create_user as createUser, " +
-                " r.update_user as updateUser, r.id as resultId, r.category as category, r.step as step, r.test_data as testData, r.actual_result as actualResult, r.result as result " +
+                " r.update_user as updateUser, r.id as resultId, r.category as category, c.step as step, r.test_data as testData, r.actual_result as actualResult, r.result as result " +
                 " from  test_result r INNER JOIN test_case c on c.id = r.case_id " +
                 " WHERE c.ticket_no = :#{#query.ticketNo} and (r.category & :#{#query.env}) > 0 and (r.category & :#{#query.device}) > 0 order by c.create_time, r.id",
             countQuery = "SELECT count(*) from test_result r  INNER JOIN test_case c on c.id = r.case_id " +

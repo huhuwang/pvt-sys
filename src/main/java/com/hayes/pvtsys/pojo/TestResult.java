@@ -33,9 +33,6 @@ public class TestResult implements Serializable {
     @Column(name = "category")
     private Integer category;
 
-    @Column(name = "step")
-    private String step;
-
     @Column(name = "test_data")
     private String testData;
 
