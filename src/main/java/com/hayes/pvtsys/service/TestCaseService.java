@@ -47,8 +47,12 @@ public class TestCaseService {
 
     @Transactional
     public void addCase(TestCaseDto testCaseDto){
-        TestCase testCase = new TestCase();
-        testCase.setId(testCase.getId());
+        TestCase testCase;
+        if (testCaseDto.getId() != null){
+            testCase = ticketCaseRepository.findById(testCaseDto.getId()).orElseThrow();
+        } else {
+            testCase = new TestCase();
+        }
         testCase.setTicketNo(testCaseDto.getTicketNo());
         testCase.setDescription(testCaseDto.getDescription());
         testCase.setSummary(testCaseDto.getSummary());
