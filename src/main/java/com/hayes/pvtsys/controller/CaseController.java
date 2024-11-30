@@ -5,6 +5,7 @@ import com.hayes.pvtsys.dto.RelatedCaseDto;
 import com.hayes.pvtsys.dto.TestCaseDto;
 import com.hayes.pvtsys.dto.TestResultDto;
 import com.hayes.pvtsys.pojo.BaseTestCase;
+import com.hayes.pvtsys.pojo.TestCase;
 import com.hayes.pvtsys.query.BaseCaseQuery;
 import com.hayes.pvtsys.query.CaseQuery;
 import com.hayes.pvtsys.service.TestCaseService;
@@ -34,6 +35,20 @@ public class CaseController {
     public HttpResult<PageResponse<TestResultDto>> findPage(@RequestBody CaseQuery query){
         PageResponse<TestResultDto> page = testCaseService.findPage(query);
         return HttpResult.returnSuccess(page);
+    }
+
+    @PostMapping("/page/ticket")
+    @PreAuthorize("hasAnyAuthority('list-case-ticket')")
+    public HttpResult<PageResponse<TestCase>> findPageWithTicket(@RequestBody BaseCaseQuery query){
+        PageResponse<TestCase> page = testCaseService.queryPage(query);
+        return HttpResult.returnSuccess(page);
+    }
+
+    @GetMapping("/query/{id}")
+    @PreAuthorize("hasAnyAuthority('case-detail')")
+    public HttpResult<TestCase> queryById(@PathVariable("id") Integer caseId){
+        TestCase testCase = testCaseService.queryCaseDetail(caseId);
+        return HttpResult.returnSuccess(testCase);
     }
 
     @PostMapping("/base/page")

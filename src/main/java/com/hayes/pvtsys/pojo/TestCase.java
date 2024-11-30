@@ -76,4 +76,9 @@ public class TestCase implements Serializable {
     @Column(name = "status")
     private byte status;
 
+    @Transient
+    private Integer category;
+
+    @Transient
+    private String rtFlow;
 }

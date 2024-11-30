@@ -8,6 +8,8 @@ import java.io.Serializable;
 @Data
 public class TestCaseDto implements Serializable {
 
+    private Integer id;
+
     private String ticketNo;
 
     private String description;

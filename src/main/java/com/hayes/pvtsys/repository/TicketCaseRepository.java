@@ -1,6 +1,7 @@
 package com.hayes.pvtsys.repository;
 
 import com.hayes.pvtsys.pojo.TestCase;
+import com.hayes.pvtsys.query.BaseCaseQuery;
 import com.hayes.pvtsys.query.CaseQuery;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +21,11 @@ public interface TicketCaseRepository extends JpaRepository<TestCase, Integer> {
             countQuery = "SELECT count(*) from test_result r  INNER JOIN test_case c on c.id = r.case_id " +
             " WHERE c.ticket_no = :#{#query.ticketNo} and (r.category & :#{#query.env}) > 0 and (r.category & :#{#query.device}) > 0", nativeQuery = true)
     Page<Map<String, Object>> findPage(Pageable pageable, @Param("query") CaseQuery query);
+
+    @Query(value = "select c from TestCase c where c.type = 1 " +
+            " AND (:#{#query.ticketNo} is null or :#{#query.ticketNo} = '' or UPPER(c.ticketNo) = UPPER(:#{#query.ticketNo}))" +
+            " AND (:#{#query.description} is null or :#{#query.description} = '' or LOWER(c.description) like CONCAT('%',LOWER(:#{#query.description}), '%')) ")
+    Page<TestCase>  queryPage(Pageable pageable, @Param("query") BaseCaseQuery query);
 
     void deleteTestCaseByTicketNo(String ticketNo);
 }

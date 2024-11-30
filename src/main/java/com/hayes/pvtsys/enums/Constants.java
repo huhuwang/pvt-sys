@@ -8,7 +8,7 @@ public class Constants {
 
     public static final String COMMON_TICKET_DETAIL = "this is a common ticket";
 
-    public static final String COMMON_TICKET_TYPE = "health check";
+    public static final String COMMON_TICKET_TYPE = "Others";
 
     public static final Integer CONSTANTS_TYPE_FLOW_STEP = 1;
 
