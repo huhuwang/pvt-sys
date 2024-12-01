@@ -37,6 +37,9 @@ public class BaseTestCase implements Serializable {
     @Column(name = "category")
     private String category;
 
+    @Column(name = "category_val")
+    private Integer categoryVal;
+
     @Column(name = "type")
     private Integer type;
 

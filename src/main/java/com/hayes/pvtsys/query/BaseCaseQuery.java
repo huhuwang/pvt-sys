@@ -2,7 +2,6 @@ package com.hayes.pvtsys.query;
 
 import lombok.Data;
 
-import java.util.List;
 import java.util.Set;
 
 @Data
@@ -14,9 +13,9 @@ public class BaseCaseQuery extends BaseQuery {
 
     private Set<Integer> baseCaseIds;
 
-    private List<Integer> env;
+    private Integer env;
 
-    private  List<Integer> device;
+    private Integer device;
 
     private String description;
 }

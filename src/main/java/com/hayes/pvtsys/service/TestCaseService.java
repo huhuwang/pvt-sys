@@ -8,6 +8,7 @@ import com.hayes.pvtsys.dto.RelatedCaseDto;
 import com.hayes.pvtsys.dto.TestCaseDto;
 import com.hayes.pvtsys.dto.TestResultDto;
 import com.hayes.pvtsys.enums.Constants;
+import com.hayes.pvtsys.enums.TestCategoryEnum;
 import com.hayes.pvtsys.enums.TestEnvEnum;
 import com.hayes.pvtsys.pojo.BaseTestCase;
 import com.hayes.pvtsys.pojo.TestCase;
@@ -113,6 +114,7 @@ public class TestCaseService {
 
     public void addBaseCase(BaseTestCase baseTestCase){
         baseTestCase.setRowHeight(baseTestCase.rowHeight());
+        baseTestCase.setCategoryVal(TestCategoryEnum.getEnvInt(baseTestCase.getCategory()));
         baseTicketCaseRepository.save(baseTestCase);
     }
 
