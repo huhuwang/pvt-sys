@@ -1,8 +1,6 @@
 package com.hayes.pvtsys.dto;
 
 import cn.hutool.core.collection.CollUtil;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.hayes.pvtsys.pojo.PVTUser;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;

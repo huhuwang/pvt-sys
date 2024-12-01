@@ -8,8 +8,7 @@ import com.hayes.pvtsys.dto.RelatedCaseDto;
 import com.hayes.pvtsys.dto.TestCaseDto;
 import com.hayes.pvtsys.dto.TestResultDto;
 import com.hayes.pvtsys.enums.Constants;
-import com.hayes.pvtsys.enums.TestCagetoryEnum;
-import com.hayes.pvtsys.enums.TestDeviceEnum;
+import com.hayes.pvtsys.enums.TestEnvEnum;
 import com.hayes.pvtsys.pojo.BaseTestCase;
 import com.hayes.pvtsys.pojo.TestCase;
 import com.hayes.pvtsys.pojo.TestResult;
@@ -29,6 +28,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.*;
 
 @Service
 public class TestCaseService {
@@ -91,8 +93,7 @@ public class TestCaseService {
         TestCase testCase = ticketCaseRepository.findById(caseId).orElseThrow();
         Set<Integer> categoryList = new HashSet<>();
         String rtFlow = splitCategory(caseId, categoryList);
-        int category = categoryList.stream().mapToInt(Integer::intValue).sum();
-        testCase.setCategory(category);
+        testCase.setCategory(categoryList);
         testCase.setRtFlow(rtFlow);
         return testCase;
     }
@@ -105,6 +106,7 @@ public class TestCaseService {
      */
     public PageResponse<BaseTestCase> findBaseCasePage(BaseCaseQuery query){
         Pageable pageRequest = PageRequest.of(query.getPageNum() - 1, query.getPageSize());
+
         Page<BaseTestCase> baseTestCases = baseTicketCaseRepository.findPage(pageRequest, query);
         return new PageResponse<>(baseTestCases);
     }
@@ -159,29 +161,25 @@ public class TestCaseService {
             for (BaseTestCase baseTestCase: baseTestCases){
                 TestCase testCase = getTestCase(baseTestCase, ticketNo);
                 testCase = ticketCaseRepository.saveAndFlush(testCase);
-                Integer category = baseTestCase.getCategory();
+                List<Integer> category = Arrays.stream(baseTestCase.getCategory().split(",")).map(Integer::parseInt).toList();
                 ticketResultRepository.saveAllAndFlush(createResults(category, testCase, baseTestCase.getRtFlow()));
             }
         }
     }
 
-    private List<TestResult> createResults(int category, TestCase testCase, String rtFlow){
+    private List<TestResult> createResults(List<Integer> category, TestCase testCase, String rtFlow){
         Set<Integer> exist = new HashSet<>();
         splitCategory(testCase.getId(), exist);
-        List<Integer> envList = TestCagetoryEnum.getAllEnvValue(category);
-        List<Integer> deviceList = TestDeviceEnum.getAllDeviceValue(category);
         List<TestResult> results = new ArrayList<>();
-        for (int i: envList){
-            for (int j: deviceList){
-                if (!exist.contains(i) || !exist.contains(j)){
-                    TestResult result = new TestResult();
-                    result.setTestCase(testCase);
-                    result.setCategory(i + j);
-                    if ((i & TestCagetoryEnum.RT.getValue()) > 0){
-                        result.setRtFlow(rtFlow);
-                    }
-                    results.add(result);
+        for (Integer e: category){
+            if (!exist.contains(e)){
+                TestResult result = new TestResult();
+                result.setTestCase(testCase);
+                result.setCategory(e);
+                if ((e & TestEnvEnum.RT.getValue()) > 0){
+                    result.setRtFlow(rtFlow);
                 }
+                results.add(result);
             }
         }
         return results;
@@ -203,13 +201,10 @@ public class TestCaseService {
         List<TestResult> results = ticketResultRepository.findTestResultByCaseId(caseId);
         String rtFlow = null;
         for (TestResult result : results){
-            if ((result.getCategory() & TestCagetoryEnum.RT.getValue()) > 0){
+            if ((result.getCategory() & TestEnvEnum.RT.getValue()) > 0){
                 rtFlow = result.getRtFlow();
             }
-            List<Integer> allEnv = TestCagetoryEnum.getAllEnvValue(result.getCategory());
-            List<Integer> deviceValue = TestDeviceEnum.getAllDeviceValue(result.getCategory());
-            sum.addAll(allEnv);
-            sum.addAll(deviceValue);
+            sum.add(result.getCategory());
         }
         return rtFlow;
     }

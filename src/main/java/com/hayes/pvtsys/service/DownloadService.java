@@ -4,7 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.hayes.pvtsys.enums.Constants;
 import com.hayes.pvtsys.enums.ExcelTitleEnum;
-import com.hayes.pvtsys.enums.TestCagetoryEnum;
+import com.hayes.pvtsys.enums.TestEnvEnum;
 import com.hayes.pvtsys.enums.TestDeviceEnum;
 import com.hayes.pvtsys.pojo.*;
 import com.hayes.pvtsys.repository.DeploymentRepository;
@@ -127,7 +127,7 @@ public class DownloadService {
             for (int num = 0; num < flowNumber; num++){
                 String RT = "RT" + (num + 1);
                 XSSFSheet sheet = workbook.createSheet(RT);
-                createTitle(workbook, sheet, TestCagetoryEnum.RT.getValue());
+                createTitle(workbook, sheet, TestEnvEnum.RT.getValue());
 
                 List<TestResult> testResult= ticketResultRepository.findTestResultByEnvAndTicketWithRT(ticketNos, RT);
                 for (int i = 0; i < testResult.size(); i++) {

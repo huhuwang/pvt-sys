@@ -1,7 +1,7 @@
 package com.hayes.pvtsys.pojo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.hayes.pvtsys.enums.TestCagetoryEnum;
+import com.hayes.pvtsys.enums.TestEnvEnum;
 import com.hayes.pvtsys.enums.TestDeviceEnum;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -76,7 +76,7 @@ public class TestResult implements Serializable {
     private List<Document> documents;
 
     public String getEnv() {
-        return TestCagetoryEnum.getEnv(this.category);
+        return TestEnvEnum.getEnv(this.category);
     }
 
     public String getDevice() {

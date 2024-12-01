@@ -4,6 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 public class TestCaseDto implements Serializable {
@@ -22,7 +23,7 @@ public class TestCaseDto implements Serializable {
 
     private Byte priority;
 
-    private Integer category;
+    private List<Integer> category;
 
     private String rtFlow;
 

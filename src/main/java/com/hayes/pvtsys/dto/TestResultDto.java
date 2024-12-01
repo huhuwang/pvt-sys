@@ -1,6 +1,6 @@
 package com.hayes.pvtsys.dto;
 
-import com.hayes.pvtsys.enums.TestCagetoryEnum;
+import com.hayes.pvtsys.enums.TestEnvEnum;
 import com.hayes.pvtsys.enums.TestDeviceEnum;
 import lombok.Data;
 
@@ -44,7 +44,7 @@ public class TestResultDto {
     private String device;
 
     public String getEnv() {
-        return TestCagetoryEnum.getEnv(this.category);
+        return TestEnvEnum.getEnv(this.category);
     }
 
     public String getDevice() {

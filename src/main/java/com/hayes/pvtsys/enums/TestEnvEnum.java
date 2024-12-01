@@ -8,15 +8,19 @@ import java.util.List;
 
 @Getter
 @AllArgsConstructor
-public enum TestDeviceEnum {
+public enum TestEnvEnum {
 
-    WEB(16),
+    SIT(1),
 
-    IPAD(32);
+    UAT(2),
+
+    RT(4),
+
+    PVT(8);
 
     private final int value;
-    public static String getDevice(int category){
-        for (TestDeviceEnum categoryEnum: TestDeviceEnum.values()){
+    public static String getEnv(int category){
+        for (TestEnvEnum categoryEnum: TestEnvEnum.values()){
             if ((categoryEnum.value & category) > 0){
                 return categoryEnum.name();
             }

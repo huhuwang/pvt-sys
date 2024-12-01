@@ -2,8 +2,7 @@ package com.hayes.pvtsys.pojo;
 
 import cn.hutool.core.util.StrUtil;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.hayes.pvtsys.enums.TestCagetoryEnum;
-import com.hayes.pvtsys.enums.TestDeviceEnum;
+import com.hayes.pvtsys.enums.TestCategoryEnum;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -14,7 +13,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 @Entity
 @Table(name = "common_test_case_base")
@@ -37,7 +35,7 @@ public class BaseTestCase implements Serializable {
     private String expectedResult;
 
     @Column(name = "category")
-    private Integer category;
+    private String category;
 
     @Column(name = "type")
     private Integer type;
@@ -80,12 +78,6 @@ public class BaseTestCase implements Serializable {
     @Column(name = "status")
     private byte status;
 
-    @Transient
-    private int[] envList;
-
-    @Transient
-    private int[] device;
-
     public int rowHeight(){
         int summary = StrUtil.isBlank(this.summary) ? 1: this.summary.split("\n").length;
         int describe = StrUtil.isBlank(this.description) ? 1: this.description.split("\n").length;
@@ -96,14 +88,6 @@ public class BaseTestCase implements Serializable {
     }
 
     public String getEnv(){
-        List<String> allEnv = TestCagetoryEnum.getAllEnv(this.category);
-        List<String> allDevice = TestDeviceEnum.getAllDevice(this.category);
-        StringBuilder sb = new StringBuilder();
-        for (String env: allEnv){
-            for (String device: allDevice){
-                sb.append(env).append("-").append(device).append(",");
-            }
-        }
-        return sb.substring(0, sb.toString().length() - 1);
+        return TestCategoryEnum.getEvnString(this.getCategory());
     }
 }

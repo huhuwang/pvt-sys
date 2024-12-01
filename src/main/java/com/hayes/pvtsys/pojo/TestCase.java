@@ -11,6 +11,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Set;
 
 @Entity
 @Table(name = "test_case")
@@ -77,7 +78,7 @@ public class TestCase implements Serializable {
     private byte status;
 
     @Transient
-    private Integer category;
+    private Set<Integer> category;
 
     @Transient
     private String rtFlow;
