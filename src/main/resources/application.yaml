@@ -5,8 +5,8 @@ spring:
     name: pvt-sys
 
   datasource:
-    username: test
-    password: 123456
+    username: root
+    password: whh655118
     url: jdbc:mysql://localhost:3306/pvt?useUnicode=true&characterEncoding=utf-8
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
