@@ -31,7 +31,7 @@ public class TicketService {
     }
 
     public List<Ticket> queryTicketsByDeployment(int deploymentId){
-       return ticketRepository.findTicketByDeploymentIdOrderByCreateTimeDescIdDesc(deploymentId);
+       return ticketRepository.findTicketByDeploymentId(deploymentId);
     }
 
     @Transactional

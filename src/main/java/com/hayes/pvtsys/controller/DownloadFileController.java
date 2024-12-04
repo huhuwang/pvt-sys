@@ -30,6 +30,6 @@ public class DownloadFileController {
     @GetMapping("/pvt")
     @PreAuthorize("hasAnyAuthority('export-pvt')")
     public void downloadPVT(HttpServletResponse response, Integer deploymentId){
-
+        downloadService.downloadPVT(response, deploymentId);
     }
 }

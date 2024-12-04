@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface TicketRepository extends JpaRepository<Ticket, Integer> {
 
-    List<Ticket> findTicketByDeploymentIdOrderByCreateTimeDescIdDesc(Integer deploymentId);
+    List<Ticket> findTicketByDeploymentId(Integer deploymentId);
 
     Ticket findTicketByTicketNoAndDeploymentId(String ticketNo, int deploymentId);
 

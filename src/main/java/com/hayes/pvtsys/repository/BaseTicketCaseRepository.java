@@ -31,7 +31,7 @@ public interface BaseTicketCaseRepository extends JpaRepository<BaseTestCase, In
 
     @Query(value = "select b from BaseTestCase b " +
             " where b.id not in (select t.baseCaseFrom from TestCase t where t.type = 2 and t.ticketNo = :#{#query.ticketNo}) " +
-            " and b.id in (:#{#query.baseCaseIds})")
+            " and b.id in (:#{#query.baseCaseIds}) order by b.id")
     List<BaseTestCase> queryBase(@Param("query") BaseCaseQuery query);
 
 

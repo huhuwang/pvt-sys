@@ -30,6 +30,10 @@ public interface TicketResultRepository extends JpaRepository<TestResult, Intege
     @Query(value = "select t from TestResult t where t.testCase.ticketNo in (:ticketNo) AND t.category in (20, 36) AND t.rtFlow = :RT")
     List<TestResult> findTestResultByEnvAndTicketWithRT(@Param("ticketNo") List<String> ticketNo,  @Param("RT") String RT);
 
+
+    @Query(value = "select t from TestResult t where t.testCase.ticketNo in (:ticketNo) AND t.category in (24, 40)")
+    List<TestResult> findTestResultByEnvAndTicketWithPVT(@Param("ticketNo") List<String> ticketNo);
+
     @Query(value = "select t from TestResult t where t.testCase.id = :caseId")
     List<TestResult> findTestResultByCaseId(@Param("caseId") Integer caseId);
 }

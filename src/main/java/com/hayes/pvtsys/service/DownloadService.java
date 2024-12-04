@@ -1,36 +1,47 @@
 package com.hayes.pvtsys.service;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import com.hayes.pvtsys.enums.Constants;
 import com.hayes.pvtsys.enums.ExcelTitleEnum;
-import com.hayes.pvtsys.enums.TestEnvEnum;
 import com.hayes.pvtsys.enums.TestDeviceEnum;
+import com.hayes.pvtsys.enums.TestEnvEnum;
+import com.hayes.pvtsys.pojo.Document;
 import com.hayes.pvtsys.pojo.*;
 import com.hayes.pvtsys.repository.DeploymentRepository;
 import com.hayes.pvtsys.repository.TicketRepository;
 import com.hayes.pvtsys.repository.TicketResultRepository;
 import com.hayes.pvtsys.util.ServerPath;
+import jakarta.persistence.Column;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Data;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackagePartName;
+import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.Units;
+import org.apache.poi.wp.usermodel.HeaderFooterType;
 import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xwpf.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class DownloadService {
@@ -43,6 +54,11 @@ public class DownloadService {
 
     @Autowired
     private TicketRepository ticketRepository;
+
+    private final String elasticUrl = "https://baidu.com/";
+
+    private final String titleColor = "80aaff";
+
 
     public void downloadSU(HttpServletResponse response, String ticketNO, int env){
         HttpClient client = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(10)).build();
@@ -113,7 +129,7 @@ public class DownloadService {
 
     public void downloadRT(HttpServletResponse response, Integer deploymentId){
         Deployment deployment = deploymentRepository.findById(deploymentId).orElseThrow();
-        List<Ticket> tickets = ticketRepository.findTicketByDeploymentIdOrderByCreateTimeDescIdDesc(deploymentId);
+        List<Ticket> tickets = ticketRepository.findTicketByDeploymentId(deploymentId);
         List<String> ticketNos = tickets.stream().map(Ticket::getTicketNo).toList();
         HttpClient client = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(10)).build();
 
@@ -203,9 +219,201 @@ public class DownloadService {
 
 
     public void downloadPVT(HttpServletResponse response, Integer deploymentId){
-        Deployment deployment = deploymentRepository.findById(deploymentId).orElseThrow();
-        List<Ticket> tickets = ticketRepository.findTicketByDeploymentIdOrderByCreateTimeDescIdDesc(deploymentId);
 
+        Deployment deployment = deploymentRepository.findById(deploymentId).orElseThrow();
+        List<Ticket> tickets = ticketRepository.findTicketByDeploymentId(deploymentId);
+        List<String> ticketNos = tickets.stream().map(Ticket::getTicketNo).toList();
+        List<TestResult> testResult= ticketResultRepository.findTestResultByEnvAndTicketWithPVT(ticketNos);
+
+        String attachmentFileName = deployment.getApplicationName() + "-PVT.docx";
+
+        try (InputStream existDoc = new ClassPathResource("pvt/" + attachmentFileName).getInputStream();
+             XWPFDocument document = new XWPFDocument(existDoc)){
+
+            //开头ticket list
+            addContentAtStart(document, tickets, deployment);
+
+            //中间ticket check
+            List<String> NOUsingTicket = addResult(document, testResult, tickets);
+
+            //末尾无法check的备注
+            addContentAtEnd(document, NOUsingTicket);
+
+
+            writeDocToBrose(response, document, "PVT-" + deployment.getApplicationName());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    private void addContentAtStart(XWPFDocument document,  List<Ticket> tickets, Deployment deployment){
+        //story 相关的case
+        List<Ticket> storyTickets = tickets.stream().filter(e -> e.getType() == (byte) 1).toList();
+        Map<String, List<Ticket>> map = convertListToMapWithTypeKey(storyTickets);
+
+        XWPFParagraph paragraph_2 = document.getParagraphs().get(1);
+            map.forEach((key, value) -> {
+                XWPFRun run_2 = paragraph_2.createRun();
+                run_2.addCarriageReturn();
+                run_2.setText(key);
+                run_2.addCarriageReturn();
+                for (Ticket ticket: value){
+                    XWPFHyperlinkRun hyperlinkRun = paragraph_2.createHyperlinkRun(ticket.getTicketUrl());
+                    hyperlinkRun.setText(ticket.getTicketNo());
+                    hyperlinkRun.setColor("1a65ff");
+                    XWPFRun run_2_2 = paragraph_2.createRun();
+                    run_2_2.setText("     " + ticket.getTicketTitle());
+                    run_2_2.addCarriageReturn();
+                }
+            });
+
+            XWPFParagraph paragraph_3 = document.getParagraphs().get(2);
+            XWPFRun run_3 = paragraph_3.createRun();
+            run_3.setText("Release Green Time");
+            run_3.addCarriageReturn();
+            Date deploymentDate = deployment.getDeploymentDate();
+            String formatDate = DateUtil.formatDate(deploymentDate) + " 22:00";
+            Date startDate = DateUtil.parse(formatDate);
+            Date endDate = DateUtil.offsetHour(startDate, 4);
+            String newDateStr = DateUtil.format(startDate, "HH:mm dd/MM/yyyy") + " - " + DateUtil.format(endDate, "HH:mm dd/MM/yyyy");
+            run_3.setText(newDateStr);
+            run_3.addCarriageReturn();
+
+            //part 2
+            XWPFParagraph paragraph_4 = document.getParagraphs().get(3);
+            XWPFRun run_4 = paragraph_4.createRun();
+            run_4.setText("Part II: Step for having PVT");//标题名称
+            run_4.setColor(titleColor);//标题颜色
+            run_4.setFontSize(16);
+            run_4.addCarriageReturn();//回车换行
+            XWPFRun run_4_1 = paragraph_4.createRun();
+            run_4_1.setText("1.Rundown of PVT");
+
+            Date startDateHealth = DateUtil.offsetMinute(startDate, 30);
+            Date endDateHealth = DateUtil.offsetMinute(startDate, 45);
+
+            Date startDatePVT = DateUtil.offsetMinute(startDate, 120);
+            Date endDateHPVT= DateUtil.offsetMinute(startDate, 240);
+
+            String[][] dataRundown = {
+                    {"Items", "DateTime", "Party(ies)", "Remarks"},
+                    {"Deployment", DateUtil.format(startDate, "HH:mm dd/MM/yyyy"), "Teach Team", ""},
+                    {"Health check", DateUtil.format(startDateHealth, "HH:mm dd/MM/yyyy") + " - " + DateUtil.format(endDateHealth, "HH:mm dd/MM/yyyy"), "REMARK TODO"},
+                    {"PVT(IT + Biz)", DateUtil.format(startDatePVT, "HH:mm dd/MM/yyyy") + " - " + DateUtil.format(endDateHPVT, "HH:mm dd/MM/yyyy"), "REMARK TODO"},
+            };
+            buildDocTab(document, dataRundown);
+    }
+
+    private List<String> addResult(XWPFDocument document, List<TestResult> testResult, List<Ticket> tickets){
+
+        HttpClient client = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(10)).build();
+
+        List<Ticket> storyTickets = tickets.stream().filter(e -> e.getType() == (byte) 1).toList();
+        Map<String, Ticket> storyTicketMap = storyTickets.stream().collect(Collectors.toMap(Ticket::getTicketNo, Function.identity(), (e1, e2) -> e1));
+
+        List<String> noUseTickets = new ArrayList<>(storyTickets.stream().map(Ticket::getTicketNo).toList());
+        XWPFTable table = document.getTables().get(2);
+        table.setTableAlignment(TableRowAlign.LEFT);
+
+
+        testResult.sort((o1, o2) -> {
+            if (o1.getTestCase().getType() > o2.getTestCase().getType()){
+                return 1;
+            } else {
+                return o1.getId() - o2.getId();
+            }
+        });
+        List<ResultDto> resultDtoList = convertTestResultToResultDto(testResult);
+
+        for (ResultDto result : resultDtoList) {
+            XWPFTableRow tableRow = table.createRow();
+            TestCase testCase = result.getTestCase();
+            String ticketNo = testCase.getTicketNo();
+            if (ticketNo.contains("COMMON")) {
+                tableRow.getCell(0).setText("Regression Check");
+                tableRow.getCell(1).setText(testCase.getSummary());
+            } else {
+                XWPFHyperlinkRun hyperlinkRun = tableRow.getCell(0).addParagraph().createHyperlinkRun(storyTicketMap.get(testCase.getTicketNo()).getTicketUrl());
+                hyperlinkRun.setText(ticketNo);
+                noUseTickets.remove(ticketNo);
+                tableRow.getCell(1).setText(storyTicketMap.get(testCase.getTicketNo()).getTicketTitle());
+            }
+            String step = testCase.getStep() == null? "": testCase.getStep();
+            String[] steps = step.split("\n");
+            XWPFParagraph paragraphStep = tableRow.getCell(2).addParagraph();
+            paragraphStep.setAlignment(ParagraphAlignment.LEFT);
+            XWPFRun runStep = paragraphStep.createRun();
+            for (String st: steps){
+                if (StrUtil.isNotBlank(st) && st.trim().startsWith("pvt-source")){
+                    HttpRequest request = HttpRequest.newBuilder()
+                            .uri(URI.create(ServerPath.partTomcat() + st))
+                            .build();
+                    client.sendAsync(request, HttpResponse.BodyHandlers.ofInputStream())
+                            .thenApply(HttpResponse::body)
+                            .thenAccept(e -> {
+                                try {
+                                    runStep.addPicture(e, XWPFDocument.PICTURE_TYPE_JPEG, "health.jpg", Units.toEMU(100), Units.toEMU(50));
+                                } catch (InvalidFormatException | IOException ex) {
+                                    throw new RuntimeException(ex);
+                                }
+                            }).join();
+                    runStep.addBreak();
+                } else {
+                    runStep.setText(st);
+                    runStep.addBreak();
+                }
+            }
+            tableRow.getCell(3).setText(result.getTestData());
+            XWPFParagraph paragraphER= tableRow.getCell(4).addParagraph();
+            paragraphER.setAlignment(ParagraphAlignment.LEFT);
+            XWPFRun runER = paragraphER .createRun();
+
+            String expectedResult = testCase.getExpectedResult()== null? "": testCase.getExpectedResult();
+            String[] ers = expectedResult.split("\n");
+            for (String er: ers){
+                runER.setText(er);
+                runER.addBreak();
+            }
+            Byte pass = result.getResult();
+            String rs = pass == null ? null: pass == 1 ? "PASS" : pass == 2 ? "NO" : null;
+            tableRow.getCell(5).setText(rs);
+
+            XWPFParagraph paragraphEvidence= tableRow.getCell(6).addParagraph();
+            paragraphEvidence.setAlignment(ParagraphAlignment.LEFT);
+            XWPFRun evidenceRun = paragraphEvidence.createRun();
+            List<Document> webDocuments = result.getWebDocuments();
+            List<Document> ipadDocuments = result.getIpadDocuments();
+            createPVTEvidence(client,evidenceRun,webDocuments, "Web:");
+            createPVTEvidence(client,evidenceRun,ipadDocuments, "Ipad:");
+
+        }
+        return noUseTickets;
+    }
+
+    private void addContentAtEnd(XWPFDocument document,  List<String> tickets){
+        if (CollUtil.isNotEmpty(tickets)){
+            XWPFTable table = document.createTable(tickets.size() + 1, 2);
+            table.getRow(0).getCell(0).setText("Category(Jira)");
+            table.getRow(0).getCell(0).setWidth("2000");
+            table.getRow(0).getCell(1).setText("Remark");
+            table.getRow(0).getCell(1).setWidth("8000");
+
+            for (int i = 0; i < tickets.size(); i++){
+                table.getRow(i + 1).getCell(0).setText(tickets.get(i));
+            }
+        }
+
+    }
+    private void buildDocTab(XWPFDocument document,  String[][] data){
+        XWPFTable table= document.getTables().get(0);
+        table.setTableAlignment(TableRowAlign.LEFT);
+        for (int i = 0; i < data.length; i++){
+            for (int j = 0; j < data[i].length; j++){
+                table.getRow(i).getCell(j).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.CENTER);
+                table.getRow(i).getCell(j).setText(data[i][j]);
+            }
+        }
     }
 
     private void createFirstSheet(XSSFWorkbook workbook, RTTemplate rtTemplate){
@@ -299,6 +507,21 @@ public class DownloadService {
         }
     }
 
+    private void writeDocToBrose(HttpServletResponse response, XWPFDocument document, String fileName){
+        try(OutputStream os = new BufferedOutputStream(response.getOutputStream())){
+            response.reset();
+            String filename = fileName + ".docx";
+            response.setCharacterEncoding("UTF-8");
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
+            response.setHeader("Access-Control-Allow-Origin","*");
+            response.setContentType("application/octet-stream");
+            document.write(os);
+            os.flush();
+        } catch (IOException e){
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
     private static void insertPic(InputStream is, XSSFWorkbook workbook, XSSFSheet sheet, int row, int col){
         try {
             int pictureIdx = workbook.addPicture(is, Workbook.PICTURE_TYPE_JPEG);
@@ -376,6 +599,67 @@ public class DownloadService {
             default -> null;
         };
     }
+
+    private List<ResultDto> convertTestResultToResultDto(List<TestResult> testResult){
+        Map<Integer, ResultDto> resultDtoMap = new LinkedHashMap<>();
+        for (TestResult result: testResult){
+            ResultDto resultDto;
+            if (resultDtoMap.containsKey(result.getTestCase().getId())){
+                resultDto = resultDtoMap.get(result.getTestCase().getId());
+            } else {
+                resultDto = new ResultDto();
+                resultDto.setTestCase(result.getTestCase());
+                resultDto.setActualResult(result.getActualResult());
+                resultDto.setResult(result.getResult());
+                resultDto.setTestData(result.getTestData());
+            }
+            Integer category = result.getCategory();
+            if ((category & TestDeviceEnum.WEB.getValue()) > 0){
+                resultDto.setWebDocuments(result.getDocuments());
+            } else if ((category & TestDeviceEnum.IPAD.getValue()) > 0) {
+                resultDto.setIpadDocuments(result.getDocuments());
+            }
+            resultDtoMap.put(result.getTestCase().getId(), resultDto);
+        }
+        return new ArrayList<>(resultDtoMap.values());
+    }
+
+    private void createPVTEvidence(HttpClient client, XWPFRun evidenceRun, List<Document> documents, String device){
+        if (CollUtil.isNotEmpty(documents)){
+            evidenceRun.setText(device);
+            evidenceRun.addBreak();
+            for (Document e: documents){
+                HttpRequest request = HttpRequest.newBuilder()
+                        .uri(URI.create(ServerPath.partTomcat() + e.getUrl()))
+                        .build();
+                client.sendAsync(request, HttpResponse.BodyHandlers.ofInputStream())
+                        .thenApply(HttpResponse::body)
+                        .thenAccept(stream -> {
+                            try {
+                                evidenceRun.addPicture(stream , XWPFDocument.PICTURE_TYPE_JPEG, "evidence.jpg", Units.toEMU(100), Units.toEMU(50));
+                            } catch (InvalidFormatException | IOException ex) {
+                                throw new RuntimeException(ex);
+                            }
+                        }).join();
+                evidenceRun.addBreak();
+            }
+        }
+    }
+    private Map<String, List<Ticket>> convertListToMapWithTypeKey(List<Ticket> tickets){
+        Map<String, List<Ticket>> map = new HashMap<>();
+        for (Ticket ticket: tickets){
+            String ticketType = ticket.getTicketType();
+            List<Ticket> ticketsList;
+            if (map.containsKey(ticketType)){
+                ticketsList = map.get(ticketType);
+            } else {
+                ticketsList = new ArrayList<>();
+            }
+            ticketsList.add(ticket);
+            map.put(ticketType, ticketsList);
+        }
+        return map;
+    }
     
     @Data
     private static class Title{
@@ -384,5 +668,21 @@ public class DownloadService {
         private Integer width;
         
         private String key;
+    }
+
+    @Data
+    private static class ResultDto{
+
+        private TestCase testCase;
+
+        private String testData;
+
+        private String actualResult;
+
+        private Byte result;
+
+        private List<Document> webDocuments;
+
+        private List<Document> ipadDocuments;
     }
 }
